@@ -38,20 +38,22 @@ export default function TableSelectModal({
             return (
               <button
                 key={m.idMeja}
-                disabled={isTerisi}
                 onClick={() => {
                   onSelect(m.idMeja);
                   onClose();
                 }}
-                className={`aspect-square rounded-lg flex items-center justify-center text-2xl font-bold transition-colors ${
+                className={`aspect-square rounded-lg flex items-center justify-center text-2xl font-bold transition-colors relative ${
                   isSelected
                     ? "bg-[#2d5a4a] text-white"
                     : isTerisi
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 border-2 border-yellow-400"
                     : "bg-gray-200 text-black hover:bg-gray-300"
                 }`}
               >
                 {m.nomorMeja.replace(/\D/g, "")}
+                {isTerisi && (
+                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-yellow-500 rounded-full border-2 border-white" />
+                )}
               </button>
             );
           })}
