@@ -7,6 +7,7 @@ import { uploadGambarBahan, deleteGambarLama } from "@/lib/actions/upload";
 import type { BahanBaku } from "@/lib/types";
 
 const SATUAN_OPTIONS = ["Kg", "gram", "liter", "ml", "butir", "pcs", "ikat"];
+const MAX_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
 
 interface BahanFormModalProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ export default function BahanFormModal({
   const [gambarPreview, setGambarPreview] = useState<string | null>(null);
   const [gambarUrlLama, setGambarUrlLama] = useState<string | undefined>(undefined);
   const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (isOpen) {
@@ -42,6 +44,7 @@ export default function BahanFormModal({
       setGambarFile(null);
       setGambarPreview(initialData?.gambarUrl ?? null);
       setGambarUrlLama(initialData?.gambarUrl);
+      setError("");
     }
   }, [isOpen, initialData]);
 
@@ -49,10 +52,17 @@ export default function BahanFormModal({
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
-    setGambarFile(file);
-    if (file) {
-      setGambarPreview(URL.createObjectURL(file));
+    if (!file) return;
+
+    if (file.size > MAX_SIZE_BYTES) {
+      setError(`Ukuran file terlalu besar (${(file.size / 1024 / 1024).toFixed(1)}MB). Maksimal 2MB.`);
+      e.target.value = "";
+      return;
     }
+
+    setError("");
+    setGambarFile(file);
+    setGambarPreview(URL.createObjectURL(file));
   }
 
   function handleRemoveSatuan(index: number) {
@@ -66,8 +76,10 @@ export default function BahanFormModal({
   }
 
   async function handleSubmit() {
+    setError("");
+
     if (!namaBahan.trim() || stokTersedia < 0 || selectedSatuan.length === 0) {
-      alert("Nama, kuantitas, dan satuan wajib diisi");
+      setError("Nama, kuantitas, dan satuan wajib diisi");
       return;
     }
 
@@ -82,7 +94,7 @@ export default function BahanFormModal({
       setIsUploading(false);
 
       if (!uploadResult.success) {
-        alert(uploadResult.message ?? "Gagal upload gambar");
+        setError(uploadResult.message ?? "Gagal upload gambar");
         return;
       }
 
@@ -115,6 +127,12 @@ export default function BahanFormModal({
         <h2 className="text-2xl font-bold mb-6">
           {mode === "create" ? "Tambah Bahan" : "Edit Bahan"}
         </h2>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3 mb-5">
+            {error}
+          </div>
+        )}
 
         <div className="flex flex-col gap-5">
           <div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getStrukData } from "@/lib/actions/pesanan-selforder";
 import { generateStrukCanvas, downloadCanvasAsImage } from "@/lib/utils/generate-struk";
@@ -34,33 +34,33 @@ export default function PembayaranBerhasilClient({
 }) {
   const router = useRouter();
 
-  const [isGenerating, setIsGenerating] =
-    useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!error) return;
+    const timer = setTimeout(() => setError(""), 4000);
+    return () => clearTimeout(timer);
+  }, [error]);
 
   async function handleSimpanStruk() {
+    setError("");
     setIsGenerating(true);
 
     try {
-      const struk =
-        await getStrukData(
-          data.id_pembayaran
-        );
+      const struk = await getStrukData(data.id_pembayaran);
 
       if (!struk) {
-        alert("Gagal mengambil data struk");
+        setError("Gagal mengambil data struk");
         return;
       }
 
-      const canvas =
-        await generateStrukCanvas(struk);
+      const canvas = await generateStrukCanvas(struk);
 
-      downloadCanvasAsImage(
-        canvas,
-        `Struk_SIR_${struk.idPembayaran}.png`
-      );
+      downloadCanvasAsImage(canvas, `Struk_SIR_${struk.idPembayaran}.png`);
     } catch (err) {
       console.error(err);
-      alert("Gagal membuat struk");
+      setError("Gagal membuat struk");
     } finally {
       setIsGenerating(false);
     }
@@ -86,6 +86,15 @@ export default function PembayaranBerhasilClient({
       </div>
 
       <div className="px-5 -mt-6">
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3 mb-4 flex items-center justify-between">
+            <span>{error}</span>
+            <button onClick={() => setError("")} className="font-bold px-2">
+              ×
+            </button>
+          </div>
+        )}
 
         <div className="bg-[#2d5a4a] text-white rounded-xl p-4 flex items-center gap-3 mb-4">
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { usePolling } from "@/lib/hooks/usePolling";
 import OrderCard from "@/components/shared/OrderCard";
 import { updateStatusTiket, getAntrianDapur } from "@/lib/actions/tiket";
@@ -35,6 +36,13 @@ function formatTanggalPendek(dateString: string): string {
 export default function AntrianClient({ initialAntrian }: { initialAntrian: AntrianItem[] }) {
   const { data } = usePolling(getAntrianDapur, 3000);
   const antrian = data ?? initialAntrian;
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!error) return;
+    const timer = setTimeout(() => setError(""), 4000);
+    return () => clearTimeout(timer);
+  }, [error]);
 
   const pesananBaru = antrian.filter((a) => a.statusTiket === "menunggu");
   const diproses = antrian.filter((a) => a.statusTiket === "diproses");
@@ -43,13 +51,22 @@ export default function AntrianClient({ initialAntrian }: { initialAntrian: Antr
   async function handleUpdateStatus(idTiket: number, statusBaru: StatusTiket) {
     const result = await updateStatusTiket(idTiket, statusBaru);
     if (!result.success) {
-      alert("Gagal update status, silakan coba lagi");
+      setError("Gagal update status, silakan coba lagi");
     }
     // Tidak perlu setState manual - polling ambil alih dalam 3 detik
   }
 
   return (
     <main className="flex-1 p-8 overflow-y-auto">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3 mb-6 flex items-center justify-between">
+          <span>{error}</span>
+          <button onClick={() => setError("")} className="font-bold px-2">
+            ×
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-3 gap-6 items-start">
         <AntrianColumn title="Pesanan Baru" count={pesananBaru.length}>
           {pesananBaru.map((a) => (

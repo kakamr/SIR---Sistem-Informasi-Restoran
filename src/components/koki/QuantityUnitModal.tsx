@@ -18,19 +18,23 @@ export default function QuantityUnitModal({
 }: QuantityUnitModalProps) {
   const [selectedBahanId, setSelectedBahanId] = useState<number | "">("");
   const [jumlah, setJumlah] = useState(0);
+  const [error, setError] = useState("");
 
   if (!isOpen) return null;
 
   const selectedBahan = availableBahan.find((b) => b.idBahan === selectedBahanId);
 
   function handleSubmit() {
+    setError("");
+
     if (!selectedBahan || jumlah <= 0) {
-      alert("Pilih bahan dan masukkan jumlah yang valid");
+      setError("Pilih bahan dan masukkan jumlah yang valid");
       return;
     }
     onSubmit(selectedBahan.idBahan, selectedBahan.namaBahan, jumlah, selectedBahan.satuan);
     setSelectedBahanId("");
     setJumlah(0);
+    setError("");
     onClose();
   }
 
@@ -43,6 +47,12 @@ export default function QuantityUnitModal({
         className="bg-white rounded-2xl p-8 w-full max-w-sm"
         onClick={(e) => e.stopPropagation()}
       >
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3 mb-4">
+            {error}
+          </div>
+        )}
+
         <label className="block text-sm font-semibold mb-2">Pilih Bahan</label>
         <select
           value={selectedBahanId}
