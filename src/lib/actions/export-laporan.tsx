@@ -4,8 +4,9 @@ import ExcelJS from "exceljs";
 import { renderToBuffer } from "@react-pdf/renderer";
 import pool from "@/lib/db";
 import LaporanPdfDocument from "@/components/kasir/LaporanPdfDocument";
+import { RowDataPacket } from "mysql2";
 
-interface RawDataRow {
+interface RawDataRow extends RowDataPacket{
   id_pesanan: number;
   waktu_pesan: Date;
   nama_pelanggan: string | null;
@@ -24,7 +25,7 @@ interface RawDataRow {
 }
 
 async function fetchRawData(periodeMulai: string, periodeSelesai: string): Promise<RawDataRow[]> {
-  const [rows] = await pool.query<any[]>(
+  const [rows] = await pool.query<RawDataRow[]>(
     `SELECT
       p.id_pesanan,
       p.waktu_pesan,

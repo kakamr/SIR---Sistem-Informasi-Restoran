@@ -21,7 +21,7 @@ export default function MetodePembayaranClient({
   kodeAkses,
 }: MetodePembayaranClientProps) {
   const router = useRouter();
-  const { cartItems, clearCart } = useCart();
+  const { cartItems, clearCart, dataPelanggan } = useCart();
   const [selected, setSelected] = useState<MetodePembayaranSelfOrder | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -35,10 +35,12 @@ export default function MetodePembayaranClient({
     const total = subtotal + pajak;
 
     const result = await createPesananSelfOrder({
-      idMeja, // sekarang angka asli, bukan kodeAkses
+      idMeja,
       cartItems,
       metodePembayaran: selected,
       total,
+      namaPelanggan: dataPelanggan.namaPelanggan,
+      noTelepon: dataPelanggan.noTelepon,
     });
 
     setIsSubmitting(false);

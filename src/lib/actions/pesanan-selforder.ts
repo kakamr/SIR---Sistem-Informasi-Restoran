@@ -52,16 +52,27 @@ export async function createPesananSelfOrder(data: {
   cartItems: CartItemSelfOrder[];
   metodePembayaran: MetodePembayaranSelfOrder;
   total: number;
+  namaPelanggan?: string;
+  noTelepon?: string;
 }) {
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
 
-    // idKaryawan diisi karyawan "sistem" placeholder — sesuaikan kalau ada akun khusus self-order
+    // Kalau data diri diisi, buat baris Pelanggan dulu dan pakai id-nya sebagai FK
+    let idPelanggan: number | null = null;
+    if (data.namaPelanggan) {
+      const [pelangganResult] = await connection.query<ResultSetHeader>(
+        `INSERT INTO Pelanggan (nama_pelanggan, no_telepon) VALUES (?, ?)`,
+        [data.namaPelanggan, data.noTelepon ?? null]
+      );
+      idPelanggan = pelangganResult.insertId;
+    }
+
     const [pesananResult] = await connection.query<ResultSetHeader>(
-      `INSERT INTO Pesanan (id_meja, id_karyawan, jenis_layanan, sumber_pesanan, status_pesanan, total_tagihan)
-      VALUES (?, 1, 'dine_in', 'online', 'menunggu_bayar', ?)`,
-      [data.idMeja, data.total]
+      `INSERT INTO Pesanan (id_meja, id_pelanggan, id_karyawan, jenis_layanan, sumber_pesanan, status_pesanan, total_tagihan)
+      VALUES (?, ?, 1, 'dine_in', 'online', 'menunggu_bayar', ?)`,
+      [data.idMeja, idPelanggan, data.total]
     );
     const idPesanan = pesananResult.insertId;
 

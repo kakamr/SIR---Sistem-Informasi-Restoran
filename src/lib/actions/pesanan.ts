@@ -190,12 +190,11 @@ export async function getPesananList() {
     SELECT
       p.id_karyawan, p.id_meja, p.id_pesanan, p.jenis_layanan, p.status_pesanan, p.waktu_pesan, p.total_tagihan,
       m.nomor_meja,
-      t.status_tiket,
+      (SELECT status_tiket FROM Tiket_Dapur t WHERE t.id_pesanan = p.id_pesanan ORDER BY t.id_tiket DESC LIMIT 1) AS status_tiket,
       dp.id_detail, dp.id_menu, dp.jumlah, dp.harga_satuan, dp.subtotal,
       menu.nama_menu
     FROM Pesanan p
     LEFT JOIN Meja m ON m.id_meja = p.id_meja
-    LEFT JOIN Tiket_Dapur t ON t.id_pesanan = p.id_pesanan
     LEFT JOIN Detail_Pesanan dp ON dp.id_pesanan = p.id_pesanan
     LEFT JOIN Menu menu ON menu.id_menu = dp.id_menu
     ORDER BY p.waktu_pesan DESC, dp.id_detail ASC
@@ -249,11 +248,18 @@ export async function getPesananSiapSaji() {
   const [rows] = await pool.query<PesananListRow[]>(`
     SELECT
       p.id_karyawan, p.id_meja, p.id_pesanan, p.jenis_layanan, p.status_pesanan, p.waktu_pesan, p.total_tagihan,
-      m.nomor_meja, t.status_tiket,
+      m.nomor_meja,
+      t.status_tiket,
       dp.id_detail, dp.id_menu, dp.jumlah, dp.harga_satuan, dp.subtotal,
       menu.nama_menu
     FROM Pesanan p
-    JOIN Tiket_Dapur t ON t.id_pesanan = p.id_pesanan
+    JOIN (
+      SELECT id_pesanan, status_tiket, waktu_selesai
+      FROM Tiket_Dapur
+      WHERE id_tiket IN (
+        SELECT MAX(id_tiket) FROM Tiket_Dapur GROUP BY id_pesanan
+      )
+    ) t ON t.id_pesanan = p.id_pesanan
     LEFT JOIN Meja m ON m.id_meja = p.id_meja
     LEFT JOIN Detail_Pesanan dp ON dp.id_pesanan = p.id_pesanan
     LEFT JOIN Menu menu ON menu.id_menu = dp.id_menu

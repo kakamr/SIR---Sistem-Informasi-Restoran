@@ -6,6 +6,7 @@ import MenuCard from "@/components/kasir/MenuCard";
 import CartPanel from "@/components/kasir/CartPanel";
 import TableSelectModal from "@/components/kasir/TableSelectModal";
 import CategoryTabs from "@/components/selforder/CategoryTabs";
+import PesananBerhasilModal from "@/components/kasir/PesananBerhasilModal";
 import { createPesananLengkap } from "@/lib/actions/pesanan";
 import type { Menu, Meja, CartItem, JenisLayanan } from "@/lib/types";
 import { usePolling } from "@/lib/hooks/usePolling";
@@ -18,6 +19,14 @@ interface PemesananClientProps {
   menuList: Menu[];
   mejaList: Meja[];
   idKaryawan: number;
+}
+
+interface RingkasanPesanan {
+  jenisLayanan: JenisLayanan;
+  selectedMeja: Meja | null;
+  cartItems: CartItem[];
+  metodeBayar: string | null;
+  total: number;
 }
 
 export default function PemesananClient({
@@ -45,6 +54,7 @@ export default function PemesananClient({
   const [metodeBayar, setMetodeBayar] = useState<"tunai" | "qris" | "edc" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [ringkasanBerhasil, setRingkasanBerhasil] = useState<RingkasanPesanan | null>(null);
 
   const selectedMeja = mejaList.find((m) => m.idMeja === selectedMejaId) ?? null;
 
@@ -120,9 +130,23 @@ export default function PemesananClient({
     }
 
     setError("");
+
+    // Simpan ringkasan dulu untuk ditampilkan di modal, sebelum cart di-reset
+    setRingkasanBerhasil({
+      jenisLayanan,
+      selectedMeja,
+      cartItems,
+      metodeBayar,
+      total,
+    });
+
+    setStep("pesanan");
+  }
+
+  function handleTutupModalBerhasil() {
+    setRingkasanBerhasil(null);
     handleClearCart();
     setMetodeBayar(null);
-    setStep("pesanan");
   }
 
   return (
@@ -197,6 +221,16 @@ export default function PemesananClient({
         meja={mejaList}
         selectedMejaId={selectedMejaId}
         onSelect={setSelectedMejaId}
+      />
+
+      <PesananBerhasilModal
+        isOpen={ringkasanBerhasil !== null}
+        onClose={handleTutupModalBerhasil}
+        jenisLayanan={ringkasanBerhasil?.jenisLayanan ?? "dine_in"}
+        selectedMeja={ringkasanBerhasil?.selectedMeja ?? null}
+        cartItems={ringkasanBerhasil?.cartItems ?? []}
+        metodeBayar={ringkasanBerhasil?.metodeBayar ?? null}
+        total={ringkasanBerhasil?.total ?? 0}
       />
 
       {isSubmitting && (

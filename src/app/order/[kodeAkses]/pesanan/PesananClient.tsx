@@ -124,7 +124,8 @@ export default function PesananClient({ nomorMeja, kodeAkses }: PesananClientPro
 
       <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-4 bg-[#e2e2e2]">
         <button
-          onClick={() => router.push(`/order/${kodeAkses}/metode-pembayaran`)}
+          // onClick={() => router.push(`/order/${kodeAkses}/metode-pembayaran`)}
+          onClick={() => router.push(`/order/${kodeAkses}/data-diri`)}
           disabled={cartItems.length === 0}
           className="w-full bg-[#2d5a4a] text-white font-semibold rounded-full py-4 disabled:opacity-50"
         >

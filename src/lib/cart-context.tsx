@@ -3,6 +3,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { CartItemSelfOrder } from "@/lib/types";
 
+export interface DataPelanggan {
+  namaPelanggan?: string;
+  noTelepon?: string;
+}
+
 interface CartContextValue {
   cartItems: CartItemSelfOrder[];
   addItem: (item: Omit<CartItemSelfOrder, "jumlah">, jumlah: number) => void;
@@ -11,6 +16,8 @@ interface CartContextValue {
   clearCart: () => void;
   totalItem: number;
   totalHarga: number;
+  dataPelanggan: DataPelanggan;
+  setDataPelanggan: (data: DataPelanggan) => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -23,9 +30,10 @@ export function CartProvider({
   children: React.ReactNode;
 }) {
   const storageKey = `sir_cart_meja_${idMeja}`;
+  const dataPelangganKey = `sir_data_pelanggan_meja_${idMeja}`;
   const [cartItems, setCartItems] = useState<CartItemSelfOrder[]>([]);
+  const [dataPelanggan, setDataPelangganState] = useState<DataPelanggan>({});
 
-  // Load dari localStorage saat mount
   useEffect(() => {
     const saved = localStorage.getItem(storageKey);
     if (saved) {
@@ -35,13 +43,25 @@ export function CartProvider({
         // ignore corrupted data
       }
     }
+
+    const savedData = localStorage.getItem(dataPelangganKey);
+    if (savedData) {
+      try {
+        setDataPelangganState(JSON.parse(savedData));
+      } catch {
+        // ignore corrupted data
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Simpan ke localStorage tiap kali berubah
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(cartItems));
   }, [cartItems, storageKey]);
+
+  useEffect(() => {
+    localStorage.setItem(dataPelangganKey, JSON.stringify(dataPelanggan));
+  }, [dataPelanggan, dataPelangganKey]);
 
   function addItem(item: Omit<CartItemSelfOrder, "jumlah">, jumlah: number) {
     setCartItems((prev) => {
@@ -71,6 +91,12 @@ export function CartProvider({
   function clearCart() {
     setCartItems([]);
     localStorage.removeItem(storageKey);
+    setDataPelangganState({});
+    localStorage.removeItem(dataPelangganKey);
+  }
+
+  function setDataPelanggan(data: DataPelanggan) {
+    setDataPelangganState(data);
   }
 
   const totalItem = cartItems.reduce((sum, i) => sum + i.jumlah, 0);
@@ -78,7 +104,17 @@ export function CartProvider({
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addItem, updateQty, updateCatatan, clearCart, totalItem, totalHarga }}
+      value={{
+        cartItems,
+        addItem,
+        updateQty,
+        updateCatatan,
+        clearCart,
+        totalItem,
+        totalHarga,
+        dataPelanggan,
+        setDataPelanggan,
+      }}
     >
       {children}
     </CartContext.Provider>
