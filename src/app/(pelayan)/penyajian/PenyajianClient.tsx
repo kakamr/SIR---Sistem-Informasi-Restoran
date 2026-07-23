@@ -72,7 +72,8 @@ export default function PenyajianClient({ initialPesanan }: { initialPesanan: Pe
           {pesananSiapSaji.map((pesanan) => (
             <OrderCard
               key={pesanan.idPesanan}
-              title={pesanan.nomorMeja ?? "Take Away"}
+              title={pesanan.nomorMeja ?? pesanan.nomorAntrian ?? "Take Away"}
+              subtitle={pesanan.nomorMeja ? undefined : "Take Away"}
               status={pesanan.statusPesanan}
               itemCount={pesanan.detailPesanan?.length}
               items={pesanan.detailPesanan ?? []}

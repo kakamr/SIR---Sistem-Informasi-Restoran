@@ -198,3 +198,12 @@ export interface SessionUser {
   role: RoleKaryawan;
 }
 
+// Data pesanan lama yang dimuat ke halaman Pemesanan saat mode edit
+export interface PesananEdit {
+  idPesanan: number;
+  idMeja: number | null;
+  jenisLayanan: JenisLayanan;
+  metodePembayaran: string; // bisa metode kasir atau metode self-order
+  totalLama: number; // jumlah_bayar sebelum diedit, untuk hitung selisih
+  items: CartItem[];
+}

@@ -11,6 +11,8 @@ interface OrderCardProps {
   total?: number;
   actionLabel?: string; // "Mulai Masak" / "Selesai" / "Selesai Disajikan"
   onAction?: () => void;
+  secondaryActionLabel?: string; // aksi sekunder, contoh "Edit Pesanan"
+  onSecondaryAction?: () => void;
 }
 
 export default function OrderCard({
@@ -22,6 +24,8 @@ export default function OrderCard({
   total,
   actionLabel,
   onAction,
+  secondaryActionLabel,
+  onSecondaryAction,
 }: OrderCardProps) {
   return (
     <div className="bg-[#fdf8f0] rounded-xl p-5 flex flex-col">
@@ -60,13 +64,25 @@ export default function OrderCard({
         </div>
       )}
 
-      {actionLabel && (
-        <button
-          onClick={onAction}
-          className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-3 mt-auto"
-        >
-          {actionLabel}
-        </button>
+      {(actionLabel || secondaryActionLabel) && (
+        <div className="mt-auto flex flex-col gap-2">
+          {secondaryActionLabel && (
+            <button
+              onClick={onSecondaryAction}
+              className="w-full border-2 border-[#2d5a4a] text-[#2d5a4a] font-semibold rounded-lg py-3"
+            >
+              {secondaryActionLabel}
+            </button>
+          )}
+          {actionLabel && (
+            <button
+              onClick={onAction}
+              className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-3"
+            >
+              {actionLabel}
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

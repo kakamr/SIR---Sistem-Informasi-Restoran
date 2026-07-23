@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import pool from "@/lib/db";
 import type { RowDataPacket, ResultSetHeader } from "mysql2";
 import type { BahanBaku } from "@/lib/types";
+import { sinkronkanStokDanMenu } from "@/lib/utils/sinkron-menu";
 
 interface BahanRow extends RowDataPacket {
   id_bahan: number;
@@ -49,7 +50,11 @@ export async function createBahan(data: {
       "INSERT INTO Bahan_Baku (nama_bahan, satuan, gambar_url, stok_tersedia, batas_minimum, status_stok) VALUES (?, ?, ?, ?, ?, ?)",
       [data.namaBahan, data.satuan, data.gambarUrl ?? null, data.stokTersedia, data.batasMinimum, statusStok]
     );
+    await sinkronkanStokDanMenu(pool);
+
     revalidatePath("/stok");
+    revalidatePath("/menu");
+    revalidatePath("/pemesanan");
     return { success: true, idBahan: result.insertId };
   } catch (error) {
     console.error("createBahan error:", error);
@@ -67,7 +72,11 @@ export async function updateBahan(
       "UPDATE Bahan_Baku SET nama_bahan = ?, satuan = ?, gambar_url = ?, stok_tersedia = ?, batas_minimum = ?, status_stok = ? WHERE id_bahan = ?",
       [data.namaBahan, data.satuan, data.gambarUrl ?? null, data.stokTersedia, data.batasMinimum, statusStok, idBahan]
     );
+    await sinkronkanStokDanMenu(pool);
+
     revalidatePath("/stok");
+    revalidatePath("/menu");
+    revalidatePath("/pemesanan");
     return { success: true };
   } catch (error) {
     console.error("updateBahan error:", error);

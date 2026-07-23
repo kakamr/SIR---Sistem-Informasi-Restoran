@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import pool from "@/lib/db";
 import type { RowDataPacket, ResultSetHeader } from "mysql2";
 import type { Menu, ResepItem } from "@/lib/types";
+import { sinkronkanStokDanMenu } from "@/lib/utils/sinkron-menu";;
 
 interface MenuWithResepRow extends RowDataPacket {
   id_menu: number;
@@ -105,8 +106,11 @@ export async function createMenu(data: {
       );
     }
 
+    await sinkronkanStokDanMenu(connection);
+
     await connection.commit();
     revalidatePath("/menu");
+    revalidatePath("/pemesanan");
     return { success: true, idMenu };
   } catch (error) {
     await connection.rollback();
@@ -147,8 +151,11 @@ export async function updateMenu(
       );
     }
 
+    await sinkronkanStokDanMenu(connection);
+
     await connection.commit();
     revalidatePath("/menu");
+    revalidatePath("/pemesanan");
     return { success: true };
   } catch (error) {
     await connection.rollback();

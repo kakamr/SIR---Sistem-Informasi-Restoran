@@ -41,6 +41,7 @@ export default function MetodePembayaranClient({
       total,
       namaPelanggan: dataPelanggan.namaPelanggan,
       noTelepon: dataPelanggan.noTelepon,
+      email: dataPelanggan.email,
     });
 
     setIsSubmitting(false);

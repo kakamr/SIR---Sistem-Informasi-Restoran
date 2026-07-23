@@ -11,6 +11,7 @@ interface PesananBerhasilModalProps {
   cartItems: CartItem[];
   metodeBayar: string | null;
   total: number;
+  nomorAntrian?: string | null;
 }
 
 const METODE_LABEL: Record<string, string> = {
@@ -27,6 +28,7 @@ export default function PesananBerhasilModal({
   cartItems,
   metodeBayar,
   total,
+  nomorAntrian,
 }: PesananBerhasilModalProps) {
   if (!isOpen) return null;
 
@@ -40,6 +42,14 @@ export default function PesananBerhasilModal({
           <p className="text-black/70">Pesanan Berhasil Dibuat</p>
           <p className="text-3xl font-bold mt-1">{formatRupiah(total)}</p>
         </div>
+
+        {nomorAntrian && (
+          <div className="bg-[#2d5a4a] text-white text-center py-5">
+            <p className="text-sm opacity-80">Nomor Antrian</p>
+            <p className="text-5xl font-bold tracking-wide mt-1">{nomorAntrian}</p>
+            <p className="text-xs opacity-80 mt-2">Sampaikan nomor ini ke pelanggan</p>
+          </div>
+        )}
 
         <div className="px-6 py-5">
           <div className="flex justify-between text-sm mb-2">

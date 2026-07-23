@@ -14,11 +14,23 @@ export default function DataDiriClient({ nomorMeja, kodeAkses }: DataDiriClientP
   const { dataPelanggan, setDataPelanggan } = useCart();
   const [nama, setNama] = useState(dataPelanggan.namaPelanggan ?? "");
   const [telepon, setTelepon] = useState(dataPelanggan.noTelepon ?? "");
+  const [email, setEmail] = useState(dataPelanggan.email ?? "");
+  const [error, setError] = useState<string | null>(null);
 
   function handleLanjut() {
+    const emailBersih = email.trim();
+
+    // Email opsional, tapi kalau diisi harus formatnya valid
+    if (emailBersih && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailBersih)) {
+      setError("Format email tidak valid. Contoh: nama@mail.com");
+      return;
+    }
+
+    setError(null);
     setDataPelanggan({
       namaPelanggan: nama.trim() || undefined,
       noTelepon: telepon.trim() || undefined,
+      email: emailBersih || undefined,
     });
     router.push(`/order/${kodeAkses}/metode-pembayaran`);
   }
@@ -68,6 +80,24 @@ export default function DataDiriClient({ nomorMeja, kodeAkses }: DataDiriClientP
               className="w-full bg-[#fdf8f0] rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#2d5a4a]"
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-1.5">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (error) setError(null);
+              }}
+              placeholder="nama@mail.com"
+              className="w-full bg-[#fdf8f0] rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#2d5a4a]"
+            />
+          </div>
+
+          {error && (
+            <p className="text-sm text-red-600 -mt-1">{error}</p>
+          )}
         </div>
       </div>
 

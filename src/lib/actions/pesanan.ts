@@ -3,10 +3,41 @@
 import { revalidatePath } from "next/cache";
 import pool from "@/lib/db";
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
-import type { DetailPesanan, CartItem, JenisLayanan, StatusPesanan, StatusTiket } from "@/lib/types";
+import type { DetailPesanan, CartItem, JenisLayanan, StatusPesanan, StatusTiket, PesananEdit } from "@/lib/types";
+import { cekStokCukup } from "@/lib/utils/cek-stok";
+import type { PoolConnection } from "mysql2/promise";
 
 interface NextUrutRow extends RowDataPacket {
   next_urut: number;
+}
+
+interface NextAntrianRow extends RowDataPacket {
+  next_nomor: number;
+}
+
+/**
+ * Buat nomor antrian berikutnya untuk take away, format "A-01".
+ * Nomor direset tiap hari — tanggal berganti, mulai lagi dari A-01.
+ * WAJIB dipanggil di dalam transaksi.
+ */
+async function buatNomorAntrian(connection: PoolConnection): Promise<string> {
+  // Kunci baris take away hari ini supaya dua kasir yang input bersamaan
+  // tidak mendapat nomor yang sama
+  await connection.query(
+    `SELECT id_pesanan FROM Pesanan
+     WHERE jenis_layanan = 'take_away' AND DATE(waktu_pesan) = CURDATE()
+     FOR UPDATE`
+  );
+
+  const [rows] = await connection.query<NextAntrianRow[]>(
+    `SELECT COALESCE(MAX(CAST(SUBSTRING(nomor_antrian, 3) AS UNSIGNED)), 0) + 1 AS next_nomor
+     FROM Pesanan
+     WHERE jenis_layanan = 'take_away'
+       AND nomor_antrian IS NOT NULL
+       AND DATE(waktu_pesan) = CURDATE()`
+  );
+
+  return `A-${String(rows[0].next_nomor).padStart(2, "0")}`;
 }
 
 interface PesananListRow extends RowDataPacket {
@@ -21,6 +52,7 @@ interface PesananListRow extends RowDataPacket {
   waktu_pesan: Date;
   total_tagihan: number;
   nomor_meja: string | null;
+  nomor_antrian: string | null;
 
   id_detail: number | null;
   id_menu: number | null;
@@ -42,6 +74,7 @@ interface PesananRow extends RowDataPacket {
   jenis_layanan: JenisLayanan;
   status_pesanan: StatusPesanan;
   status_tiket: StatusTiket | null;
+  nomor_antrian: string | null;
 }
 
 interface DetailPesananRow extends RowDataPacket {
@@ -51,6 +84,29 @@ interface DetailPesananRow extends RowDataPacket {
 
 interface JumlahPesananRow extends RowDataPacket {
   jumlah: number;
+}
+
+interface PesananEditRow extends RowDataPacket {
+  id_pesanan: number;
+  id_meja: number | null;
+  jenis_layanan: JenisLayanan;
+  status_pesanan: StatusPesanan;
+  status_tiket: StatusTiket | null;
+  metode_pembayaran: string | null;
+  jumlah_bayar: number | null;
+}
+
+interface DetailEditRow extends RowDataPacket {
+  id_menu: number;
+  nama_menu: string;
+  harga_satuan: number;
+  jumlah: number;
+  catatan_item: string | null;
+  gambar_url: string | null;
+}
+
+interface IdPembayaranRow extends RowDataPacket {
+  id_pembayaran: number;
 }
 
 interface PesananGroup {
@@ -65,6 +121,7 @@ interface PesananGroup {
   waktuPesan: string;
   totalTagihan: number;
   nomorMeja?: string;
+  nomorAntrian?: string;
 
   detailPesanan: DetailPesanan[];
 }
@@ -84,11 +141,22 @@ export async function createPesananLengkap(data: {
   try {
     await connection.beginTransaction();
 
+    // 0. Validasi stok — pesanan ditolak kalau bahan baku tidak mencukupi
+    const stokError = await cekStokCukup(connection, data.cartItems);
+    if (stokError) {
+      await connection.rollback();
+      return { success: false, message: stokError };
+    }
+
+    // 0c. Nomor antrian hanya untuk take away — dine in cukup pakai nomor meja
+    const nomorAntrian =
+      data.jenisLayanan === "take_away" ? await buatNomorAntrian(connection) : null;
+
     // 1. Insert Pesanan
     const [pesananResult] = await connection.query<ResultSetHeader>(
-      `INSERT INTO Pesanan (id_meja, id_karyawan, jenis_layanan, sumber_pesanan, status_pesanan, total_tagihan)
-      VALUES (?, ?, ?, 'on_shop', 'diproses', ?)`,
-      [data.idMeja, data.idKaryawan, data.jenisLayanan, data.total]
+      `INSERT INTO Pesanan (id_meja, id_karyawan, jenis_layanan, sumber_pesanan, nomor_antrian, status_pesanan, total_tagihan)
+      VALUES (?, ?, ?, 'on_shop', ?, 'diproses', ?)`,
+      [data.idMeja, data.idKaryawan, data.jenisLayanan, nomorAntrian, data.total]
     );
     const idPesanan = pesananResult.insertId;
 
@@ -160,7 +228,7 @@ export async function createPesananLengkap(data: {
     revalidatePath("/stok");
     revalidatePath("/menu");
 
-    return { success: true, idPesanan };
+    return { success: true, idPesanan, nomorAntrian };
   } catch (error) {
     await connection.rollback();
     console.error("createPesananLengkap error:", error);
@@ -189,7 +257,7 @@ export async function getPesananList() {
   const [rows] = await pool.query<PesananListRow[]>(`
     SELECT
       p.id_karyawan, p.id_meja, p.id_pesanan, p.jenis_layanan, p.status_pesanan, p.waktu_pesan, p.total_tagihan,
-      m.nomor_meja,
+      m.nomor_meja, p.nomor_antrian,
       (SELECT status_tiket FROM Tiket_Dapur t WHERE t.id_pesanan = p.id_pesanan ORDER BY t.id_tiket DESC LIMIT 1) AS status_tiket,
       dp.id_detail, dp.id_menu, dp.jumlah, dp.harga_satuan, dp.subtotal,
       menu.nama_menu
@@ -248,7 +316,7 @@ export async function getPesananSiapSaji() {
   const [rows] = await pool.query<PesananListRow[]>(`
     SELECT
       p.id_karyawan, p.id_meja, p.id_pesanan, p.jenis_layanan, p.status_pesanan, p.waktu_pesan, p.total_tagihan,
-      m.nomor_meja,
+      m.nomor_meja, p.nomor_antrian,
       t.status_tiket,
       dp.id_detail, dp.id_menu, dp.jumlah, dp.harga_satuan, dp.subtotal,
       menu.nama_menu
@@ -281,6 +349,7 @@ export async function getPesananSiapSaji() {
         waktuPesan: row.waktu_pesan.toISOString(),
         totalTagihan: Number(row.total_tagihan),
         nomorMeja: row.nomor_meja ?? undefined,
+        nomorAntrian: row.nomor_antrian ?? undefined,
         detailPesanan: [],
       });
     }
@@ -420,6 +489,238 @@ export async function cancelPesanan(idPesanan: number) {
     await connection.rollback();
     console.error("cancelPesanan error:", error);
     return { success: false, message: "Gagal membatalkan pesanan" };
+  } finally {
+    connection.release();
+  }
+}
+
+/**
+ * Ambil data pesanan untuk dimuat ke halaman Pemesanan saat mode edit.
+ * Mengembalikan null kalau pesanan sudah tidak boleh diedit —
+ * jadi kalau kasir memaksa buka /pemesanan?edit=xx, tetap ditolak.
+ */
+export async function getPesananForEdit(idPesanan: number): Promise<PesananEdit | null> {
+  const [rows] = await pool.query<PesananEditRow[]>(
+    `SELECT p.id_pesanan, p.id_meja, p.jenis_layanan, p.status_pesanan,
+       (SELECT status_tiket FROM Tiket_Dapur t WHERE t.id_pesanan = p.id_pesanan
+        ORDER BY t.id_tiket DESC LIMIT 1) AS status_tiket,
+       (SELECT metode_pembayaran FROM Pembayaran pb WHERE pb.id_pesanan = p.id_pesanan
+        ORDER BY pb.id_pembayaran DESC LIMIT 1) AS metode_pembayaran,
+       (SELECT jumlah_bayar FROM Pembayaran pb WHERE pb.id_pesanan = p.id_pesanan
+        ORDER BY pb.id_pembayaran DESC LIMIT 1) AS jumlah_bayar
+     FROM Pesanan p
+     WHERE p.id_pesanan = ?`,
+    [idPesanan]
+  );
+
+  const pesanan = rows[0];
+  if (!pesanan) return null;
+  if (pesanan.status_pesanan !== "diproses") return null;
+  if (pesanan.status_tiket !== null && pesanan.status_tiket !== "menunggu") return null;
+
+  const [detailRows] = await pool.query<DetailEditRow[]>(
+    `SELECT dp.id_menu, dp.jumlah, dp.harga_satuan, dp.catatan_item, m.nama_menu, m.gambar_url
+     FROM Detail_Pesanan dp
+     JOIN Menu m ON m.id_menu = dp.id_menu
+     WHERE dp.id_pesanan = ?
+     ORDER BY dp.id_detail ASC`,
+    [idPesanan]
+  );
+
+  return {
+    idPesanan: pesanan.id_pesanan,
+    idMeja: pesanan.id_meja,
+    jenisLayanan: pesanan.jenis_layanan,
+    metodePembayaran: pesanan.metode_pembayaran ?? "",
+    totalLama: Number(pesanan.jumlah_bayar ?? 0),
+    items: detailRows.map((d) => ({
+      idMenu: d.id_menu,
+      namaMenu: d.nama_menu,
+      harga: Number(d.harga_satuan), // pakai harga saat dipesan, bukan harga menu sekarang
+      jumlah: d.jumlah,
+      gambarUrl: d.gambar_url ?? undefined,
+      catatanItem: d.catatan_item ?? undefined,
+    })),
+  };
+}
+
+export async function updatePesananLengkap(data: {
+  idPesanan: number;
+  idMeja: number | null;
+  jenisLayanan: JenisLayanan;
+  cartItems: CartItem[];
+  metodePembayaran: "tunai" | "qris" | "edc";
+  total: number;
+}) {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    // 1. Validasi ulang di server, jangan cuma mengandalkan UI
+    const [pesananRows] = await connection.query<PesananRow[]>(
+      "SELECT id_meja, status_pesanan, nomor_antrian FROM Pesanan WHERE id_pesanan = ?",
+      [data.idPesanan]
+    );
+    const pesananLama = pesananRows[0];
+
+    if (!pesananLama) {
+      await connection.rollback();
+      return { success: false, message: "Pesanan tidak ditemukan" };
+    }
+    if (pesananLama.status_pesanan !== "diproses") {
+      await connection.rollback();
+      return { success: false, message: "Pesanan ini sudah tidak bisa diubah" };
+    }
+    if (data.cartItems.length === 0) {
+      await connection.rollback();
+      return { success: false, message: "Pesanan tidak boleh kosong" };
+    }
+
+    const [tiketRows] = await connection.query<TiketRow[]>(
+      "SELECT id_tiket, status_tiket FROM Tiket_Dapur WHERE id_pesanan = ?",
+      [data.idPesanan]
+    );
+    if (tiketRows.length > 0 && tiketRows[0].status_tiket !== "menunggu") {
+      await connection.rollback();
+      return {
+        success: false,
+        message: "Pesanan tidak bisa diubah karena koki sudah mulai memasak",
+      };
+    }
+
+    // 2. Kembalikan stok dari item LAMA
+    const [detailLama] = await connection.query<DetailPesananRow[]>(
+      "SELECT id_menu, jumlah FROM Detail_Pesanan WHERE id_pesanan = ?",
+      [data.idPesanan]
+    );
+    for (const d of detailLama) {
+      await connection.query(
+        `UPDATE Bahan_Baku b JOIN Resep r ON r.id_bahan = b.id_bahan
+         SET b.stok_tersedia = b.stok_tersedia + (r.jumlah_dibutuhkan * ?)
+         WHERE r.id_menu = ?`,
+        [d.jumlah, d.id_menu]
+      );
+    }
+
+    // 2b. Baru validasi stok SETELAH stok lama dikembalikan, supaya bahan
+    //     yang "dipinjam" pesanan ini sendiri ikut dihitung sebagai tersedia
+    const stokError = await cekStokCukup(connection, data.cartItems);
+    if (stokError) {
+      await connection.rollback();
+      return { success: false, message: stokError };
+    }
+
+    // 3. Ganti seluruh isi Detail_Pesanan dengan item BARU
+    await connection.query("DELETE FROM Detail_Pesanan WHERE id_pesanan = ?", [data.idPesanan]);
+    for (const item of data.cartItems) {
+      await connection.query(
+        `INSERT INTO Detail_Pesanan (id_pesanan, id_menu, jumlah, harga_satuan, subtotal, catatan_item)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [data.idPesanan, item.idMenu, item.jumlah, item.harga, item.harga * item.jumlah, item.catatanItem ?? null]
+      );
+    }
+
+    // 4. Potong stok untuk item BARU
+    for (const item of data.cartItems) {
+      await connection.query(
+        `UPDATE Bahan_Baku b JOIN Resep r ON r.id_bahan = b.id_bahan
+         SET b.stok_tersedia = b.stok_tersedia - (r.jumlah_dibutuhkan * ?)
+         WHERE r.id_menu = ?`,
+        [item.jumlah, item.idMenu]
+      );
+    }
+
+    // 5. Hitung ulang status stok & status menu (dua arah: bisa habis, bisa aman lagi)
+    await connection.query(
+      `UPDATE Bahan_Baku SET status_stok = CASE
+         WHEN stok_tersedia <= 0 THEN 'habis'
+         WHEN stok_tersedia <= batas_minimum THEN 'menipis'
+         ELSE 'aman' END`
+    );
+    await connection.query(
+      `UPDATE Menu m
+       JOIN Resep r ON r.id_menu = m.id_menu
+       JOIN Bahan_Baku b ON b.id_bahan = r.id_bahan
+       SET m.status_menu = 'aktif'
+       WHERE m.status_menu = 'nonaktif'
+         AND m.id_menu NOT IN (
+           SELECT r2.id_menu FROM Resep r2
+           JOIN Bahan_Baku b2 ON b2.id_bahan = r2.id_bahan
+           WHERE b2.status_stok = 'habis'
+         )`
+    );
+    await connection.query(
+      `UPDATE Menu m
+       JOIN Resep r ON r.id_menu = m.id_menu
+       JOIN Bahan_Baku b ON b.id_bahan = r.id_bahan
+       SET m.status_menu = 'nonaktif'
+       WHERE b.status_stok = 'habis'`
+    );
+
+    // 6. Update data pesanan (meja, jenis layanan, total baru)
+    const mejaBaru = data.jenisLayanan === "dine_in" ? data.idMeja : null;
+
+    // Dine in → take away: dapat nomor antrian baru.
+    // Take away → dine in: nomor antriannya dilepas jadi NULL.
+    // Tetap take away: nomor lamanya dipertahankan supaya pelanggan tidak bingung.
+    let nomorAntrian: string | null = null;
+    if (data.jenisLayanan === "take_away") {
+      nomorAntrian = pesananLama.nomor_antrian ?? (await buatNomorAntrian(connection));
+    }
+
+    await connection.query(
+      "UPDATE Pesanan SET id_meja = ?, jenis_layanan = ?, nomor_antrian = ?, total_tagihan = ? WHERE id_pesanan = ?",
+      [mejaBaru, data.jenisLayanan, nomorAntrian, data.total, data.idPesanan]
+    );
+
+    // 7. Update Pembayaran mengikuti total & metode baru
+    const [bayarRows] = await connection.query<IdPembayaranRow[]>(
+      "SELECT id_pembayaran FROM Pembayaran WHERE id_pesanan = ? ORDER BY id_pembayaran DESC LIMIT 1",
+      [data.idPesanan]
+    );
+    if (bayarRows.length > 0) {
+      await connection.query(
+        `UPDATE Pembayaran SET metode_pembayaran = ?, jumlah_bayar = ?, status_pembayaran = 'berhasil'
+         WHERE id_pembayaran = ?`,
+        [data.metodePembayaran, data.total, bayarRows[0].id_pembayaran]
+      );
+    } else {
+      await connection.query(
+        `INSERT INTO Pembayaran (id_pesanan, metode_pembayaran, jumlah_bayar, status_pembayaran)
+         VALUES (?, ?, ?, 'berhasil')`,
+        [data.idPesanan, data.metodePembayaran, data.total]
+      );
+    }
+
+    // 8. Sinkronkan status meja lama & baru (dijalankan SETELAH Pesanan di-update,
+    //    supaya pesanan ini tidak ikut terhitung sebagai pesanan aktif di meja lama)
+    const mejaLama = pesananLama.id_meja;
+    if (mejaBaru) {
+      await connection.query("UPDATE Meja SET status_meja = 'terisi' WHERE id_meja = ?", [mejaBaru]);
+    }
+    if (mejaLama && mejaLama !== mejaBaru) {
+      const [pesananAktifRows] = await connection.query<JumlahPesananRow[]>(
+        `SELECT COUNT(*) as jumlah FROM Pesanan
+         WHERE id_meja = ? AND status_pesanan NOT IN ('selesai', 'dibatalkan')`,
+        [mejaLama]
+      );
+      if (pesananAktifRows[0].jumlah === 0) {
+        await connection.query("UPDATE Meja SET status_meja = 'kosong' WHERE id_meja = ?", [mejaLama]);
+      }
+    }
+
+    await connection.commit();
+    revalidatePath("/pemesanan");
+    revalidatePath("/pesanan");
+    revalidatePath("/antrian");
+    revalidatePath("/stok");
+    revalidatePath("/menu");
+    revalidatePath("/meja");
+    return { success: true, nomorAntrian };
+  } catch (error) {
+    await connection.rollback();
+    console.error("updatePesananLengkap error:", error);
+    return { success: false, message: "Gagal menyimpan perubahan pesanan" };
   } finally {
     connection.release();
   }

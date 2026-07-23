@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import MenuCard from "@/components/kasir/MenuCard";
 import CartPanel from "@/components/kasir/CartPanel";
 import TableSelectModal from "@/components/kasir/TableSelectModal";
 import CategoryTabs from "@/components/selforder/CategoryTabs";
 import PesananBerhasilModal from "@/components/kasir/PesananBerhasilModal";
-import { createPesananLengkap } from "@/lib/actions/pesanan";
-import type { Menu, Meja, CartItem, JenisLayanan } from "@/lib/types";
+import { createPesananLengkap, updatePesananLengkap } from "@/lib/actions/pesanan";
+import type { Menu, Meja, CartItem, JenisLayanan, PesananEdit } from "@/lib/types";
 import { usePolling } from "@/lib/hooks/usePolling";
 import { getMenuList } from "@/lib/actions/menu";
 import Image from "next/image";
@@ -19,6 +20,7 @@ interface PemesananClientProps {
   menuList: Menu[];
   mejaList: Meja[];
   idKaryawan: number;
+  pesananEdit?: PesananEdit | null;
 }
 
 interface RingkasanPesanan {
@@ -27,13 +29,17 @@ interface RingkasanPesanan {
   cartItems: CartItem[];
   metodeBayar: string | null;
   total: number;
+  nomorAntrian: string | null;
 }
 
 export default function PemesananClient({
   menuList,
   mejaList,
   idKaryawan,
+  pesananEdit = null,
 }: PemesananClientProps) {
+  const router = useRouter();
+  const isEdit = pesananEdit !== null;
   const { data: polledMenu } = usePolling(getMenuList, 10000);
   const menuAktif = (polledMenu ?? menuList).filter((m) => m.statusMenu === "aktif");
 
@@ -47,11 +53,19 @@ export default function PemesananClient({
   });
 
   const [step, setStep] = useState<"pesanan" | "pembayaran">("pesanan");
-  const [jenisLayanan, setJenisLayanan] = useState<JenisLayanan>("dine_in");
-  const [selectedMejaId, setSelectedMejaId] = useState<number | null>(null);
+  const [jenisLayanan, setJenisLayanan] = useState<JenisLayanan>(
+    pesananEdit?.jenisLayanan ?? "dine_in"
+  );
+  const [selectedMejaId, setSelectedMejaId] = useState<number | null>(pesananEdit?.idMeja ?? null);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [metodeBayar, setMetodeBayar] = useState<"tunai" | "qris" | "edc" | null>(null);
+  const [cartItems, setCartItems] = useState<CartItem[]>(pesananEdit?.items ?? []);
+  const [metodeBayar, setMetodeBayar] = useState<"tunai" | "qris" | "edc" | null>(
+    // Metode self-order (gopay/dana/VA) tidak ada di pilihan kasir,
+    // jadi kalau pesanan berasal dari QR meja, kasir harus memilih ulang
+    pesananEdit && ["tunai", "qris", "edc"].includes(pesananEdit.metodePembayaran)
+      ? (pesananEdit.metodePembayaran as "tunai" | "qris" | "edc")
+      : null
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [ringkasanBerhasil, setRingkasanBerhasil] = useState<RingkasanPesanan | null>(null);
@@ -110,22 +124,31 @@ export default function PemesananClient({
 
     setIsSubmitting(true);
 
-    const result = await createPesananLengkap({
-      idKaryawan,
-      idMeja: jenisLayanan === "dine_in" ? selectedMejaId : null,
-      jenisLayanan,
-      cartItems,
-      metodePembayaran: metodeBayar,
-      subtotal,
-      pajak,
-      diskon,
-      total,
-    });
+    const result = isEdit
+      ? await updatePesananLengkap({
+          idPesanan: pesananEdit.idPesanan,
+          idMeja: jenisLayanan === "dine_in" ? selectedMejaId : null,
+          jenisLayanan,
+          cartItems,
+          metodePembayaran: metodeBayar,
+          total,
+        })
+      : await createPesananLengkap({
+          idKaryawan,
+          idMeja: jenisLayanan === "dine_in" ? selectedMejaId : null,
+          jenisLayanan,
+          cartItems,
+          metodePembayaran: metodeBayar,
+          subtotal,
+          pajak,
+          diskon,
+          total,
+        });
 
     setIsSubmitting(false);
 
     if (!result.success) {
-      setError(result.message ?? "Gagal membuat pesanan");
+      setError(result.message ?? "Gagal menyimpan pesanan");
       return;
     }
 
@@ -138,6 +161,7 @@ export default function PemesananClient({
       cartItems,
       metodeBayar,
       total,
+      nomorAntrian: result.nomorAntrian ?? null,
     });
 
     setStep("pesanan");
@@ -145,13 +169,37 @@ export default function PemesananClient({
 
   function handleTutupModalBerhasil() {
     setRingkasanBerhasil(null);
+    if (isEdit) {
+      // Selesai mengedit — balik ke daftar pesanan
+      router.push("/pesanan");
+      return;
+    }
     handleClearCart();
     setMetodeBayar(null);
   }
 
   return (
     <>
-      <Header dashboardLabel="Kasir Dashboard" pageTitle="Pemesanan" />
+      <Header
+        dashboardLabel="Kasir Dashboard"
+        pageTitle={isEdit ? "Edit Pesanan" : "Pemesanan"}
+      />
+
+      {isEdit && (
+        <div className="mx-8 mt-4 flex items-center justify-between rounded-lg border border-[#2d5a4a] bg-[#fdf8f0] px-5 py-3">
+          <p className="text-sm">
+            Sedang mengedit <span className="font-bold">pesanan #{pesananEdit.idPesanan}</span>
+            {pesananEdit.idMeja === null && " (Take Away)"} — perubahan baru tersimpan setelah
+            konfirmasi pembayaran.
+          </p>
+          <button
+            onClick={() => router.push("/pesanan")}
+            className="text-sm font-semibold text-[#2d5a4a] underline shrink-0 ml-4"
+          >
+            Batal Edit
+          </button>
+        </div>
+      )}
 
       <div className="flex-1 flex h-[calc(100vh-96px)] overflow-hidden">
         <main className="flex-1 p-8 overflow-y-auto">
@@ -212,6 +260,8 @@ export default function PemesananClient({
           onSelectMetodeBayar={setMetodeBayar}
           onConfirmPembayaran={handleConfirmPembayaran}
           error={error}
+          isEdit={isEdit}
+          totalDibayar={pesananEdit?.totalLama}
         />
       </div>
 
@@ -231,6 +281,7 @@ export default function PemesananClient({
         cartItems={ringkasanBerhasil?.cartItems ?? []}
         metodeBayar={ringkasanBerhasil?.metodeBayar ?? null}
         total={ringkasanBerhasil?.total ?? 0}
+        nomorAntrian={ringkasanBerhasil?.nomorAntrian}
       />
 
       {isSubmitting && (

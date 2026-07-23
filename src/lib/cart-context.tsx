@@ -6,6 +6,7 @@ import type { CartItemSelfOrder } from "@/lib/types";
 export interface DataPelanggan {
   namaPelanggan?: string;
   noTelepon?: string;
+  email?: string;
 }
 
 interface CartContextValue {

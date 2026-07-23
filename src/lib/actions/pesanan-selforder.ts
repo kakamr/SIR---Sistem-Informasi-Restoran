@@ -3,6 +3,7 @@
 import pool from "@/lib/db";
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import type { CartItemSelfOrder, MetodePembayaranSelfOrder } from "@/lib/types";
+import { cekStokCukup } from "@/lib/utils/cek-stok";
 
 interface PembayaranStatusRow extends RowDataPacket {
   id_pembayaran: number;
@@ -54,17 +55,25 @@ export async function createPesananSelfOrder(data: {
   total: number;
   namaPelanggan?: string;
   noTelepon?: string;
+  email?: string;
 }) {
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
 
+    // Validasi stok sebelum pelanggan diarahkan ke halaman pembayaran
+    const stokError = await cekStokCukup(connection, data.cartItems);
+    if (stokError) {
+      await connection.rollback();
+      return { success: false, message: stokError };
+    }
+
     // Kalau data diri diisi, buat baris Pelanggan dulu dan pakai id-nya sebagai FK
     let idPelanggan: number | null = null;
     if (data.namaPelanggan) {
       const [pelangganResult] = await connection.query<ResultSetHeader>(
-        `INSERT INTO Pelanggan (nama_pelanggan, no_telepon) VALUES (?, ?)`,
-        [data.namaPelanggan, data.noTelepon ?? null]
+        `INSERT INTO Pelanggan (nama_pelanggan, no_telepon, email) VALUES (?, ?, ?)`,
+        [data.namaPelanggan, data.noTelepon ?? null, data.email ?? null]
       );
       idPelanggan = pelangganResult.insertId;
     }
@@ -158,6 +167,17 @@ export async function confirmPembayaranSelfOrder(idPembayaran: number) {
       "SELECT id_menu, jumlah FROM Detail_Pesanan WHERE id_pesanan = ?",
       [idPesanan]
     );
+
+    // Cek ulang: stok bisa saja habis dipakai kasir sejak pesanan ini dibuat
+    const stokError = await cekStokCukup(
+      connection,
+      detailRows.map((d) => ({ idMenu: d.id_menu, jumlah: d.jumlah }))
+    );
+    if (stokError) {
+      await connection.rollback();
+      return { success: false, message: stokError };
+    }
+
     for (const d of detailRows) {
       await connection.query(
         `UPDATE Bahan_Baku b JOIN Resep r ON r.id_bahan = b.id_bahan
@@ -182,7 +202,7 @@ export async function confirmPembayaranSelfOrder(idPembayaran: number) {
   } catch (error) {
     await connection.rollback();
     console.error("confirmPembayaranSelfOrder error:", error);
-    return { success: false };
+    return { success: false, message: "Gagal memproses pembayaran" };
   } finally {
     connection.release();
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { usePolling } from "@/lib/hooks/usePolling";
 import OrderCard from "@/components/shared/OrderCard";
 import ConfirmDeleteModal from "@/components/shared/ConfirmDeleteModal";
@@ -8,6 +9,7 @@ import { getPesananList, cancelPesanan } from "@/lib/actions/pesanan";
 import type { Pesanan } from "@/lib/types";
 
 export default function PesananClient({ initialPesanan }: { initialPesanan: Pesanan[] }) {
+  const router = useRouter();
   const [pesananToCancel, setPesananToCancel] = useState<Pesanan | null>(null);
 
   const { data } = usePolling(getPesananList, 3000, pesananToCancel === null);
@@ -38,13 +40,20 @@ export default function PesananClient({ initialPesanan }: { initialPesanan: Pesa
         {pesananList.map((pesanan) => (
           <OrderCard
             key={pesanan.idPesanan}
-            title={pesanan.nomorMeja ?? "Take Away"}
+            title={pesanan.nomorMeja ?? pesanan.nomorAntrian ?? "Take Away"}
+            subtitle={pesanan.nomorMeja ? undefined : "Take Away"}
             itemCount={pesanan.detailPesanan?.length}
             status={pesanan.statusPesanan}
             items={pesanan.detailPesanan ?? []}
             total={pesanan.totalTagihan}
             actionLabel={bisaDibatalkan(pesanan) ? "Batalkan Pesanan" : undefined}
             onAction={bisaDibatalkan(pesanan) ? () => setPesananToCancel(pesanan) : undefined}
+            secondaryActionLabel={bisaDibatalkan(pesanan) ? "Edit Pesanan" : undefined}
+            onSecondaryAction={
+              bisaDibatalkan(pesanan)
+                ? () => router.push(`/pemesanan?edit=${pesanan.idPesanan}`)
+                : undefined
+            }
           />
         ))}
       </div>
