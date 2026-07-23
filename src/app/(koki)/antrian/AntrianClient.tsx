@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { usePolling } from "@/lib/hooks/usePolling";
+import { useNewItemNotification } from "@/lib/hooks/useNewItemNotification";
 import OrderCard from "@/components/shared/OrderCard";
+import ToastNotification from "@/components/shared/ToastNotification";
 import { updateStatusTiket, getAntrianDapur } from "@/lib/actions/tiket";
 import type { StatusTiket, StatusPesanan } from "@/lib/types";
 
@@ -38,26 +40,45 @@ export default function AntrianClient({ initialAntrian }: { initialAntrian: Antr
   const antrian = data ?? initialAntrian;
   const [error, setError] = useState("");
 
+  const pesananBaru = antrian.filter((a) => a.statusTiket === "menunggu");
+  const diproses = antrian.filter((a) => a.statusTiket === "diproses");
+  const siapDisajikan = antrian.filter((a) => a.statusTiket === "selesai");
+
+  // Notifikasi khusus untuk kolom "Pesanan Baru" - koki perlu tahu ada order masuk
+  const { toastMessage, dismissToast } = useNewItemNotification(
+    pesananBaru,
+    (item) => item.idTiket,
+    "/sounds/pesanan-baru.mp3" // ganti sesuai nama file audio kalian
+  );
+
+  useEffect(() => {
+    if (!toastMessage) return;
+    const timer = setTimeout(dismissToast, 3000);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toastMessage]);
+
   useEffect(() => {
     if (!error) return;
     const timer = setTimeout(() => setError(""), 4000);
     return () => clearTimeout(timer);
   }, [error]);
 
-  const pesananBaru = antrian.filter((a) => a.statusTiket === "menunggu");
-  const diproses = antrian.filter((a) => a.statusTiket === "diproses");
-  const siapDisajikan = antrian.filter((a) => a.statusTiket === "selesai");
-
   async function handleUpdateStatus(idTiket: number, statusBaru: StatusTiket) {
     const result = await updateStatusTiket(idTiket, statusBaru);
     if (!result.success) {
       setError("Gagal update status, silakan coba lagi");
     }
-    // Tidak perlu setState manual - polling ambil alih dalam 3 detik
   }
 
   return (
     <main className="flex-1 p-8 overflow-y-auto">
+      <ToastNotification
+        message={toastMessage ?? ""}
+        isVisible={toastMessage !== null}
+        onClose={dismissToast}
+      />
+
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3 mb-6 flex items-center justify-between">
           <span>{error}</span>
