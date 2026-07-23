@@ -4,7 +4,7 @@ import PenyajianClient from "./PenyajianClient";
 
 export default async function PenyajianPage() {
   const pesananList = await getPesananSiapSaji();
-  const siapSaji = pesananList.filter((p) => p.statusPesanan === "disajikan");
+  const siapSaji = pesananList;
 
   return (
     <>
