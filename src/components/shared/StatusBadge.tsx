@@ -9,7 +9,7 @@ interface StatusBadgeProps {
 const STATUS_LABEL: Record<string, string> = {
   menunggu_bayar: "Menunggu Bayar",
   diproses: "Diproses",
-  disajikan: "Disajikan",
+  siap_disajikan: "Siap Disajikan",
   selesai: "Selesai",
   dibatalkan: "Dibatalkan",
   menunggu: "Menunggu",
@@ -25,7 +25,7 @@ const STATUS_LABEL: Record<string, string> = {
 const STATUS_COLOR: Record<string, string> = {
   menunggu_bayar: "bg-yellow-600",
   diproses: "bg-[#2d5a4a]",
-  disajikan: "bg-blue-600",
+  siap_disajikan: "bg-blue-600",
   selesai: "bg-gray-500",
   dibatalkan: "bg-red-600",
   menunggu: "bg-yellow-600",

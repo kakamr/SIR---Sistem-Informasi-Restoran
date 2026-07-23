@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { usePolling } from "@/lib/hooks/usePolling";
 import OrderCard from "@/components/shared/OrderCard";
 import ConfirmDeleteModal from "@/components/shared/ConfirmDeleteModal";
+import TombolCetakStruk from "@/components/kasir/TombolCetakStruk";
 import { getPesananList, cancelPesanan } from "@/lib/actions/pesanan";
 import type { Pesanan } from "@/lib/types";
 
@@ -48,6 +49,9 @@ export default function PesananClient({ initialPesanan }: { initialPesanan: Pesa
             total={pesanan.totalTagihan}
             actionLabel={bisaDibatalkan(pesanan) ? "Batalkan Pesanan" : undefined}
             onAction={bisaDibatalkan(pesanan) ? () => setPesananToCancel(pesanan) : undefined}
+            extraAction={
+              <TombolCetakStruk idPesanan={pesanan.idPesanan} label="Cetak Ulang Struk" />
+            }
             secondaryActionLabel={bisaDibatalkan(pesanan) ? "Edit Pesanan" : undefined}
             onSecondaryAction={
               bisaDibatalkan(pesanan)

@@ -13,6 +13,7 @@ interface OrderCardProps {
   onAction?: () => void;
   secondaryActionLabel?: string; // aksi sekunder, contoh "Edit Pesanan"
   onSecondaryAction?: () => void;
+  extraAction?: React.ReactNode; // slot bebas, contoh tombol cetak struk
 }
 
 export default function OrderCard({
@@ -26,6 +27,7 @@ export default function OrderCard({
   onAction,
   secondaryActionLabel,
   onSecondaryAction,
+  extraAction,
 }: OrderCardProps) {
   return (
     <div className="bg-[#fdf8f0] rounded-xl p-5 flex flex-col">
@@ -64,8 +66,9 @@ export default function OrderCard({
         </div>
       )}
 
-      {(actionLabel || secondaryActionLabel) && (
+      {(actionLabel || secondaryActionLabel || extraAction) && (
         <div className="mt-auto flex flex-col gap-2">
+          {extraAction}
           {secondaryActionLabel && (
             <button
               onClick={onSecondaryAction}

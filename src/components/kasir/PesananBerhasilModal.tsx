@@ -1,6 +1,7 @@
 "use client";
 
 import { formatRupiah } from "@/lib/utils/formatCurrency";
+import TombolCetakStruk from "./TombolCetakStruk";
 import type { CartItem, JenisLayanan, Meja } from "@/lib/types";
 
 interface PesananBerhasilModalProps {
@@ -12,6 +13,7 @@ interface PesananBerhasilModalProps {
   metodeBayar: string | null;
   total: number;
   nomorAntrian?: string | null;
+  idPesanan?: number | null;
 }
 
 const METODE_LABEL: Record<string, string> = {
@@ -29,6 +31,7 @@ export default function PesananBerhasilModal({
   metodeBayar,
   total,
   nomorAntrian,
+  idPesanan,
 }: PesananBerhasilModalProps) {
   if (!isOpen) return null;
 
@@ -83,7 +86,8 @@ export default function PesananBerhasilModal({
           </div>
         </div>
 
-        <div className="px-6 pb-6">
+        <div className="px-6 pb-6 flex flex-col gap-2">
+          {idPesanan && <TombolCetakStruk idPesanan={idPesanan} />}
           <button
             onClick={onClose}
             className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-3"

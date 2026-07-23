@@ -15,7 +15,6 @@ export type JenisLayanan = "dine_in" | "take_away";
 export type StatusPesanan =
   | "menunggu_bayar"
   | "diproses"
-  | "disajikan"
   | "selesai"
   | "dibatalkan";
 
@@ -206,4 +205,27 @@ export interface PesananEdit {
   metodePembayaran: string; // bisa metode kasir atau metode self-order
   totalLama: number; // jumlah_bayar sebelum diedit, untuk hitung selisih
   items: CartItem[];
+}
+
+// Data untuk struk kasir (dicetak lewat dialog print browser)
+export interface StrukKasirItem {
+  namaMenu: string;
+  jumlah: number;
+  hargaSatuan: number;
+  subtotal: number;
+  catatanItem?: string;
+}
+
+export interface StrukKasirData {
+  idPesanan: number;
+  jenisLayanan: JenisLayanan;
+  nomorMeja?: string;
+  nomorAntrian?: string;
+  namaKasir?: string;
+  waktuPesan: string;
+  metodePembayaran: string;
+  items: StrukKasirItem[];
+  subtotal: number;
+  pajak: number;
+  total: number;
 }

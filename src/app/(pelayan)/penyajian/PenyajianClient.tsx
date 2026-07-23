@@ -74,7 +74,7 @@ export default function PenyajianClient({ initialPesanan }: { initialPesanan: Pe
               key={pesanan.idPesanan}
               title={pesanan.nomorMeja ?? pesanan.nomorAntrian ?? "Take Away"}
               subtitle={pesanan.nomorMeja ? undefined : "Take Away"}
-              status={pesanan.statusPesanan}
+              status="siap_disajikan"
               itemCount={pesanan.detailPesanan?.length}
               items={pesanan.detailPesanan ?? []}
               total={pesanan.totalTagihan}

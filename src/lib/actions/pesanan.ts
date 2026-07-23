@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import pool from "@/lib/db";
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
-import type { DetailPesanan, CartItem, JenisLayanan, StatusPesanan, StatusTiket, PesananEdit } from "@/lib/types";
+import type { DetailPesanan, CartItem, JenisLayanan, StatusPesanan, StatusTiket, PesananEdit, StrukKasirData } from "@/lib/types";
 import { cekStokCukup } from "@/lib/utils/cek-stok";
 import type { PoolConnection } from "mysql2/promise";
 
@@ -107,6 +107,25 @@ interface DetailEditRow extends RowDataPacket {
 
 interface IdPembayaranRow extends RowDataPacket {
   id_pembayaran: number;
+}
+
+interface StrukKasirRow extends RowDataPacket {
+  id_pesanan: number;
+  jenis_layanan: JenisLayanan;
+  nomor_meja: string | null;
+  nomor_antrian: string | null;
+  nama_karyawan: string | null;
+  waktu_pesan: Date;
+  total_tagihan: number;
+  metode_pembayaran: string | null;
+}
+
+interface StrukKasirItemRow extends RowDataPacket {
+  nama_menu: string;
+  jumlah: number;
+  harga_satuan: number;
+  subtotal: number;
+  catatan_item: string | null;
 }
 
 interface PesananGroup {
@@ -412,7 +431,7 @@ export async function cancelPesanan(idPesanan: number) {
       return { success: false, message: "Pesanan tidak ditemukan" };
     }
 
-    if (["selesai", "disajikan", "dibatalkan"].includes(pesanan.status_pesanan)) {
+    if (["selesai", "dibatalkan"].includes(pesanan.status_pesanan)) {
       await connection.rollback();
       return { success: false, message: "Pesanan ini sudah tidak bisa dibatalkan" };
     }
@@ -716,7 +735,7 @@ export async function updatePesananLengkap(data: {
     revalidatePath("/stok");
     revalidatePath("/menu");
     revalidatePath("/meja");
-    return { success: true, nomorAntrian };
+    return { success: true, idPesanan: data.idPesanan, nomorAntrian };
   } catch (error) {
     await connection.rollback();
     console.error("updatePesananLengkap error:", error);
@@ -724,4 +743,59 @@ export async function updatePesananLengkap(data: {
   } finally {
     connection.release();
   }
+}
+
+/**
+ * Ambil data struk kasir. Dipakai untuk cetak pertama kali maupun cetak ulang,
+ * jadi angkanya selalu diambil dari database — bukan dari state di layar.
+ */
+export async function getStrukKasir(idPesanan: number): Promise<StrukKasirData | null> {
+  const [rows] = await pool.query<StrukKasirRow[]>(
+    `SELECT p.id_pesanan, p.jenis_layanan, p.nomor_antrian, p.waktu_pesan, p.total_tagihan,
+            m.nomor_meja, k.nama_karyawan,
+            (SELECT metode_pembayaran FROM Pembayaran pb WHERE pb.id_pesanan = p.id_pesanan
+             ORDER BY pb.id_pembayaran DESC LIMIT 1) AS metode_pembayaran
+     FROM Pesanan p
+     LEFT JOIN Meja m ON m.id_meja = p.id_meja
+     LEFT JOIN Karyawan k ON k.id_karyawan = p.id_karyawan
+     WHERE p.id_pesanan = ?`,
+    [idPesanan]
+  );
+
+  const pesanan = rows[0];
+  if (!pesanan) return null;
+
+  const [itemRows] = await pool.query<StrukKasirItemRow[]>(
+    `SELECT dp.jumlah, dp.harga_satuan, dp.subtotal, dp.catatan_item, m.nama_menu
+     FROM Detail_Pesanan dp
+     JOIN Menu m ON m.id_menu = dp.id_menu
+     WHERE dp.id_pesanan = ?
+     ORDER BY dp.id_detail ASC`,
+    [idPesanan]
+  );
+
+  const subtotal = itemRows.reduce((sum, i) => sum + Number(i.subtotal), 0);
+  const total = Number(pesanan.total_tagihan);
+
+  return {
+    idPesanan: pesanan.id_pesanan,
+    jenisLayanan: pesanan.jenis_layanan,
+    nomorMeja: pesanan.nomor_meja ?? undefined,
+    nomorAntrian: pesanan.nomor_antrian ?? undefined,
+    namaKasir: pesanan.nama_karyawan ?? undefined,
+    waktuPesan: pesanan.waktu_pesan.toISOString(),
+    metodePembayaran: pesanan.metode_pembayaran ?? "-",
+    items: itemRows.map((i) => ({
+      namaMenu: i.nama_menu,
+      jumlah: i.jumlah,
+      hargaSatuan: Number(i.harga_satuan),
+      subtotal: Number(i.subtotal),
+      catatanItem: i.catatan_item ?? undefined,
+    })),
+    subtotal,
+    // Pajak tidak disimpan terpisah di database, jadi diturunkan dari selisihnya.
+    // Konsisten karena total = subtotal + pajak (diskon masih 0).
+    pajak: Math.max(0, total - subtotal),
+    total,
+  };
 }

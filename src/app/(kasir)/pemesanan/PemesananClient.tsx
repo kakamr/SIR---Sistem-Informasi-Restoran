@@ -30,6 +30,7 @@ interface RingkasanPesanan {
   metodeBayar: string | null;
   total: number;
   nomorAntrian: string | null;
+  idPesanan: number | null;
 }
 
 export default function PemesananClient({
@@ -162,6 +163,7 @@ export default function PemesananClient({
       metodeBayar,
       total,
       nomorAntrian: result.nomorAntrian ?? null,
+      idPesanan: result.idPesanan ?? null,
     });
 
     setStep("pesanan");
@@ -282,6 +284,7 @@ export default function PemesananClient({
         metodeBayar={ringkasanBerhasil?.metodeBayar ?? null}
         total={ringkasanBerhasil?.total ?? 0}
         nomorAntrian={ringkasanBerhasil?.nomorAntrian}
+        idPesanan={ringkasanBerhasil?.idPesanan}
       />
 
       {isSubmitting && (
