@@ -29,6 +29,10 @@ interface DetailPesananRow extends RowDataPacket {
   jumlah: number;
 }
 
+interface PelangganRow extends RowDataPacket {
+  id_pelanggan: number;
+}
+
 interface StrukPembayaranRow extends RowDataPacket {
   id_pembayaran: number;
   id_pesanan: number;
@@ -68,14 +72,51 @@ export async function createPesananSelfOrder(data: {
       return { success: false, message: stokError };
     }
 
-    // Kalau data diri diisi, buat baris Pelanggan dulu dan pakai id-nya sebagai FK
+    // Data diri dicocokkan dulu dengan pelanggan lama lewat no telepon, lalu email.
+    // Kalau ketemu, id lama dipakai ulang dan datanya diperbarui — supaya tabel
+    // Pelanggan tetap jadi data master, bukan tumpukan duplikat per transaksi.
     let idPelanggan: number | null = null;
-    if (data.namaPelanggan) {
-      const [pelangganResult] = await connection.query<ResultSetHeader>(
-        `INSERT INTO Pelanggan (nama_pelanggan, no_telepon, email) VALUES (?, ?, ?)`,
-        [data.namaPelanggan, data.noTelepon ?? null, data.email ?? null]
-      );
-      idPelanggan = pelangganResult.insertId;
+    const nama = data.namaPelanggan?.trim() || null;
+    const telepon = data.noTelepon?.trim() || null;
+    const email = data.email?.trim() || null;
+
+    if (nama || telepon || email) {
+      let idLama: number | null = null;
+
+      if (telepon) {
+        const [rows] = await connection.query<PelangganRow[]>(
+          "SELECT id_pelanggan FROM Pelanggan WHERE no_telepon = ? LIMIT 1",
+          [telepon]
+        );
+        idLama = rows[0]?.id_pelanggan ?? null;
+      }
+      if (!idLama && email) {
+        const [rows] = await connection.query<PelangganRow[]>(
+          "SELECT id_pelanggan FROM Pelanggan WHERE email = ? LIMIT 1",
+          [email]
+        );
+        idLama = rows[0]?.id_pelanggan ?? null;
+      }
+
+      if (idLama) {
+        // COALESCE dipakai supaya kolom lama tidak terhapus kalau kali ini dikosongkan
+        await connection.query(
+          `UPDATE Pelanggan SET
+             nama_pelanggan = COALESCE(?, nama_pelanggan),
+             no_telepon = COALESCE(?, no_telepon),
+             email = COALESCE(?, email)
+           WHERE id_pelanggan = ?`,
+          [nama, telepon, email, idLama]
+        );
+        idPelanggan = idLama;
+      } else {
+        const [pelangganResult] = await connection.query<ResultSetHeader>(
+          `INSERT INTO Pelanggan (nama_pelanggan, no_telepon, email) VALUES (?, ?, ?)`,
+          // nama_pelanggan NOT NULL di database, jadi perlu nilai cadangan
+          [nama ?? "Tanpa Nama", telepon, email]
+        );
+        idPelanggan = pelangganResult.insertId;
+      }
     }
 
     const [pesananResult] = await connection.query<ResultSetHeader>(
