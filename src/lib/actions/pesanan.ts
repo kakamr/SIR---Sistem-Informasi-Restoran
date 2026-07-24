@@ -272,7 +272,12 @@ export async function updateStatusPesanan(idPesanan: number, statusBaru: StatusP
   }
 }
 
-export async function getPesananList() {
+export async function getPesananList(hariTerakhir = 7) {
+  // Dibatasi angka wajar supaya aman dipakai langsung di query
+  const hari = Number.isFinite(hariTerakhir)
+    ? Math.min(365, Math.max(1, Math.floor(hariTerakhir)))
+    : 7;
+
   const [rows] = await pool.query<PesananListRow[]>(`
     SELECT
       p.id_karyawan, p.id_meja, p.id_pesanan, p.jenis_layanan, p.status_pesanan, p.waktu_pesan, p.total_tagihan,
@@ -284,6 +289,8 @@ export async function getPesananList() {
     LEFT JOIN Meja m ON m.id_meja = p.id_meja
     LEFT JOIN Detail_Pesanan dp ON dp.id_pesanan = p.id_pesanan
     LEFT JOIN Menu menu ON menu.id_menu = dp.id_menu
+    WHERE p.waktu_pesan >= DATE_SUB(CURDATE(), INTERVAL ${hari} DAY)
+       OR p.status_pesanan IN ('menunggu_bayar', 'diproses')
     ORDER BY p.waktu_pesan DESC, dp.id_detail ASC
   `);
 

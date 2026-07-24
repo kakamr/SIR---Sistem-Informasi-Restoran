@@ -24,10 +24,12 @@ export default function MetodePembayaranClient({
   const { cartItems, clearCart, dataPelanggan } = useCart();
   const [selected, setSelected] = useState<MetodePembayaranSelfOrder | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   async function handlePesan() {
     if (!selected || cartItems.length === 0) return;
 
+    setError("");
     setIsSubmitting(true);
 
     const subtotal = cartItems.reduce((sum, i) => sum + i.harga * i.jumlah, 0);
@@ -47,7 +49,7 @@ export default function MetodePembayaranClient({
     setIsSubmitting(false);
 
     if (!result.success || !result.idPembayaran) {
-      alert(result.message ?? "Gagal membuat pesanan");
+      setError(result.message ?? "Gagal membuat pesanan");
       return;
     }
 
@@ -73,6 +75,11 @@ export default function MetodePembayaranClient({
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-4 bg-[#e2e2e2]">
+        {error && (
+          <div className="mb-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+            {error}
+          </div>
+        )}
         <button
           onClick={handlePesan}
           disabled={!selected || isSubmitting}

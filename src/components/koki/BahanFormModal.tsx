@@ -14,7 +14,9 @@ interface BahanFormModalProps {
   onClose: () => void;
   mode: "create" | "edit";
   initialData?: BahanBaku;
-  onSubmit: (data: Omit<BahanBaku, "idBahan" | "statusStok">) => void;
+  onSubmit: (
+    data: Omit<BahanBaku, "idBahan" | "statusStok">
+  ) => Promise<{ success: boolean; message?: string }>;
 }
 
 export default function BahanFormModal({
@@ -33,6 +35,7 @@ export default function BahanFormModal({
   const [gambarPreview, setGambarPreview] = useState<string | null>(null);
   const [gambarUrlLama, setGambarUrlLama] = useState<string | undefined>(undefined);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -44,6 +47,7 @@ export default function BahanFormModal({
       setGambarFile(null);
       setGambarPreview(initialData?.gambarUrl ?? null);
       setGambarUrlLama(initialData?.gambarUrl);
+      setIsSaving(false);
       setError("");
     }
   }, [isOpen, initialData]);
@@ -105,13 +109,22 @@ export default function BahanFormModal({
       gambarUrl = uploadResult.url;
     }
 
-    onSubmit({
+    setIsSaving(true);
+    const result = await onSubmit({
       namaBahan,
       satuan: selectedSatuan[0],
       stokTersedia,
       batasMinimum,
       gambarUrl,
     });
+    setIsSaving(false);
+
+    if (!result.success) {
+      // Modal tetap terbuka supaya isian tidak hilang dan bisa diperbaiki
+      setError(result.message ?? "Gagal menyimpan bahan");
+      return;
+    }
+
     onClose();
   }
 
@@ -213,10 +226,10 @@ export default function BahanFormModal({
 
           <button
             onClick={handleSubmit}
-            disabled={isUploading}
+            disabled={isUploading || isSaving}
             className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-4 mt-2 disabled:opacity-50"
           >
-            {isUploading ? "Mengupload gambar..." : "Simpan"}
+            {isUploading ? "Mengupload gambar..." : isSaving ? "Menyimpan..." : "Simpan"}
           </button>
         </div>
       </div>
