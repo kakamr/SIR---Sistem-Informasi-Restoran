@@ -1,4 +1,3 @@
-// src/app/(admin)/layout.tsx
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Image from "next/image";
 

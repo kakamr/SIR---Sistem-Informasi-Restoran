@@ -23,7 +23,6 @@ export default function LoginPage() {
       return;
     }
 
-    // Reload penuh supaya middleware baca cookie yang baru diset
     window.location.href = "/";
   }
 

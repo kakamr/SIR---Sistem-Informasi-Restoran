@@ -35,7 +35,6 @@ export default function MenungguPembayaranClient({
 
   const currentData = data ?? initialData;
 
-  // kalau polling mendeteksi pembayaran berhasil
   useEffect(() => {
     if (data?.status_pembayaran === "berhasil") {
       router.replace(
@@ -44,7 +43,6 @@ export default function MenungguPembayaranClient({
     }
   }, [data, router]);
 
-  // simulasi pembayaran otomatis
   useEffect(() => {
     const timer = setTimeout(async () => {
       const result = await confirmPembayaranSelfOrder(

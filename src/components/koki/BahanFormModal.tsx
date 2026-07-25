@@ -7,7 +7,7 @@ import { uploadGambarBahan, deleteGambarLama } from "@/lib/actions/upload";
 import type { BahanBaku } from "@/lib/types";
 
 const SATUAN_OPTIONS = ["Kg", "gram", "liter", "ml", "butir", "pcs", "ikat"];
-const MAX_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
+const MAX_SIZE_BYTES = 2 * 1024 * 1024; 
 
 interface BahanFormModalProps {
   isOpen: boolean;
@@ -74,7 +74,6 @@ export default function BahanFormModal({
   }
 
   function handlePickSatuan(satuan: string) {
-    // Satuan cuma boleh 1 (bukan multi seperti Bahan di Menu)
     setSelectedSatuan([satuan]);
     setIsSatuanPickerOpen(false);
   }
@@ -120,7 +119,6 @@ export default function BahanFormModal({
     setIsSaving(false);
 
     if (!result.success) {
-      // Modal tetap terbuka supaya isian tidak hilang dan bisa diperbaiki
       setError(result.message ?? "Gagal menyimpan bahan");
       return;
     }
@@ -234,7 +232,7 @@ export default function BahanFormModal({
         </div>
       </div>
 
-      {/* Mini picker satuan */}
+      {}
       {isSatuanPickerOpen && (
         <div
           className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]"

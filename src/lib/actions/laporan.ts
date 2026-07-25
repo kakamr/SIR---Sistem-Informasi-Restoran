@@ -51,18 +51,16 @@ export async function getLaporanSummary(): Promise<LaporanSummary> {
     [[transaksiHariIniRow]],
     [pesananTerbaruRows],
     [[customerSourceRow]],
-    [menuTerlarisRows], // tambahan untuk bug 4
+    [menuTerlarisRows], 
   ] = await Promise.all([
     pool.query<JumlahRow[]>("SELECT COUNT(*) as jumlah FROM Menu WHERE status_menu = 'aktif'"),
     pool.query<JumlahRow[]>("SELECT COUNT(*) as jumlah FROM Pesanan"),
-    // Perbaikan: JOIN ke Pesanan, exclude yang statusnya 'dibatalkan'
     pool.query<TotalSaleRow[]>(`
       SELECT COALESCE(SUM(pb.jumlah_bayar),0) as total
       FROM Pembayaran pb
       JOIN Pesanan p ON p.id_pesanan = pb.id_pesanan
       WHERE pb.status_pembayaran = 'berhasil' AND p.status_pesanan != 'dibatalkan'
     `),
-    // Perbaikan yang sama di grafik revenue bulanan
     pool.query<RevenueByMonthRow[]>(`
       SELECT DATE_FORMAT(pb.waktu_bayar, '%b') as bulan, SUM(pb.jumlah_bayar) as total
       FROM Pembayaran pb
@@ -91,7 +89,6 @@ export async function getLaporanSummary(): Promise<LaporanSummary> {
       FROM Pesanan
       WHERE status_pesanan != 'dibatalkan'
     `),
-    // Query baru: menu terlaris berdasarkan total jumlah terjual, exclude pesanan dibatalkan
     pool.query<MenuTerlarisRow[]>(`
       SELECT m.nama_menu, SUM(dp.jumlah) as total_terjual
       FROM Detail_Pesanan dp

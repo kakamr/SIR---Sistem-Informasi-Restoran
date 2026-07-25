@@ -4,7 +4,6 @@ import { useState } from "react";
 import { getStrukKasir } from "@/lib/actions/pesanan";
 import type { StrukKasirData } from "@/lib/types";
 
-// Ganti di sini kalau data restoran berubah
 const NAMA_RESTORAN = "SIR";
 const ALAMAT_RESTORAN = "House of Daena, Sumeru Akademiya, Hutan Avidya, Teyvat";
 const TELEPON_RESTORAN = "0833550336";
@@ -153,7 +152,6 @@ function buatHtmlStruk(data: StrukKasirData): string {
 }
 
 async function cetakLewatIframe(html: string) {
-  // Bersihkan iframe sisa cetakan sebelumnya
   document.getElementById("iframe-struk")?.remove();
 
   const iframe = document.createElement("iframe");
@@ -171,13 +169,11 @@ async function cetakLewatIframe(html: string) {
   win.document.write(html);
   win.document.close();
 
-  // Beri waktu iframe merender isinya sebelum dialog cetak dibuka
   await new Promise((resolve) => setTimeout(resolve, 250));
 
   win.addEventListener("afterprint", () => {
     setTimeout(() => iframe.remove(), 200);
   });
-  // Jaring pengaman kalau afterprint tidak pernah terpanggil
   setTimeout(() => iframe.remove(), 60000);
 
   win.focus();

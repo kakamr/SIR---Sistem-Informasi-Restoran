@@ -1,4 +1,3 @@
-// src/app/(kasir)/laporan/LaporanClient.tsx
 "use client";
 
 import { usePolling } from "@/lib/hooks/usePolling";
@@ -11,7 +10,7 @@ import { getLaporanSummary } from "@/lib/actions/laporan";
 import type { LaporanSummary } from "@/lib/types";
 
 export default function LaporanClient({ initialSummary }: { initialSummary: LaporanSummary }) {
-  const { data } = usePolling(getLaporanSummary, 45000); // data agregat, tidak perlu sering-sering
+  const { data } = usePolling(getLaporanSummary, 45000); 
   const summary = data ?? initialSummary;
 
   return (

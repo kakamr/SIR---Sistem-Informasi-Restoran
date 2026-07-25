@@ -44,19 +44,17 @@ export default function AntrianClient({ initialAntrian }: { initialAntrian: Antr
   const diproses = antrian.filter((a) => a.statusTiket === "diproses");
   const siapDisajikan = antrian.filter((a) => a.statusTiket === "selesai");
 
-  // Notifikasi khusus untuk kolom "Pesanan Baru" - koki perlu tahu ada order masuk
   const { toastMessage, dismissToast } = useNewItemNotification(
     pesananBaru,
     (item) => item.idTiket,
-    "/sounds/pesanan-baru.mp3" // ganti sesuai nama file audio kalian
+    "/sounds/pesanan-baru.mp3" 
   );
 
   useEffect(() => {
     if (!toastMessage) return;
     const timer = setTimeout(dismissToast, 3000);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toastMessage]);
+  }, [toastMessage, dismissToast]);
 
   useEffect(() => {
     if (!error) return;

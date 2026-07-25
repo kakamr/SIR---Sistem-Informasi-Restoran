@@ -20,7 +20,7 @@ export default async function OrderMenuPage({
     <MenuSelfOrderClient
       menuList={menuList.filter((m) => m.statusMenu === "aktif")}
       nomorMeja={meja.nomorMeja}
-      idMeja={meja.idMeja.toString()} // tetap kirim idMeja asli untuk dipakai internal (cart, dsb)
+      idMeja={meja.idMeja.toString()} 
       kodeAkses={kodeAkses}
     />
   );

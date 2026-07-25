@@ -6,9 +6,9 @@ export type JenisPeriode = "harian" | "bulanan" | "tahunan";
 
 export interface PeriodeTerpilih {
   jenisPeriode: JenisPeriode;
-  periodeMulai: string; // YYYY-MM-DD
-  periodeSelesai: string; // YYYY-MM-DD
-  label: string; // untuk ditampilkan di nama file / judul laporan
+  periodeMulai: string; 
+  periodeSelesai: string; 
+  label: string; 
 }
 
 interface PeriodeLaporanModalProps {
@@ -77,7 +77,6 @@ export default function PeriodeLaporanModal({
       };
     }
 
-    // tahunan
     const mulai = `${tahunTerpilih}-01-01`;
     const selesai = `${tahunTerpilih}-12-31`;
     return {

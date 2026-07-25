@@ -1,11 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-/**
- * Membandingkan daftar ID sebelum dan sesudah polling.
- * Kalau ada ID baru yang belum pernah muncul sebelumnya, trigger notifikasi.
- */
 export function useNewItemNotification<T>(
   items: T[],
   getId: (item: T) => number,
@@ -15,6 +11,9 @@ export function useNewItemNotification<T>(
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const getIdRef = useRef(getId);
+  getIdRef.current = getId;
+
   useEffect(() => {
     if (soundUrl && !audioRef.current) {
       audioRef.current = new Audio(soundUrl);
@@ -22,10 +21,8 @@ export function useNewItemNotification<T>(
   }, [soundUrl]);
 
   useEffect(() => {
-    const currentIds = new Set(items.map(getId));
+    const currentIds = new Set(items.map((item) => getIdRef.current(item)));
 
-    // Pertama kali load, cuma catat ID yang ada - jangan trigger notifikasi
-    // (supaya tidak notif untuk data yang sudah ada sejak halaman dibuka)
     if (knownIdsRef.current === null) {
       knownIdsRef.current = currentIds;
       return;
@@ -41,18 +38,16 @@ export function useNewItemNotification<T>(
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
         audioRef.current.play().catch(() => {
-          // Browser kadang blokir autoplay sebelum ada interaksi user - abaikan errornya
         });
       }
     }
 
     knownIdsRef.current = currentIds;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
 
-  function dismissToast() {
+  const dismissToast = useCallback(() => {
     setToastMessage(null);
-  }
+  }, []);
 
   return { toastMessage, dismissToast };
 }

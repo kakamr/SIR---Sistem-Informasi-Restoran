@@ -18,7 +18,6 @@ export default async function BerhasilPage({
     notFound();
   }
 
-  // kalau ternyata belum berhasil, balik lagi
   if (pembayaran.status_pembayaran !== "berhasil") {
     redirect(
       `/order/${kodeAkses}/pembayaran/${idPembayaran}`

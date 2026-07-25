@@ -82,7 +82,6 @@ export async function generateLaporanExcel(periodeMulai: string, periodeSelesai:
   workbook.creator = "SIR - Sistem Informasi Restoran";
   workbook.created = new Date();
 
-  // ---------- Sheet 1: Data Mentah (satu baris per item pesanan) ----------
   const sheetRaw = workbook.addWorksheet("Data Transaksi");
   sheetRaw.columns = [
     { header: "ID Pesanan", key: "id_pesanan", width: 12 },
@@ -126,7 +125,6 @@ export async function generateLaporanExcel(periodeMulai: string, periodeSelesai:
   sheetRaw.getColumn("harga_satuan").numFmt = '"Rp"#,##0';
   sheetRaw.getColumn("subtotal").numFmt = '"Rp"#,##0';
 
-  // ---------- Sheet 2: Ringkasan per Menu ----------
   const menuMap = new Map<string, { jumlah: number; total: number }>();
   for (const row of rawData) {
     if (row.status_pesanan === "dibatalkan") continue;
@@ -152,7 +150,6 @@ export async function generateLaporanExcel(periodeMulai: string, periodeSelesai:
     });
   sheetMenu.getColumn("total").numFmt = '"Rp"#,##0';
 
-  // ---------- Sheet 3: Ringkasan Umum ----------
   const totalTransaksi = new Set(rawData.filter((r) => r.status_pesanan !== "dibatalkan").map((r) => r.id_pesanan)).size;
   const totalPendapatan = rawData
     .filter((r) => r.status_pesanan !== "dibatalkan")

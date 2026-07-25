@@ -8,15 +8,6 @@ interface StokKurangRow extends RowDataPacket {
   dibutuhkan: number;
 }
 
-/**
- * Cek apakah stok bahan baku cukup untuk daftar item yang dipesan.
- * WAJIB dipanggil di dalam transaksi, SEBELUM stok dikurangi.
- *
- * @returns null kalau stok cukup, atau pesan error kalau ada bahan yang kurang.
- *
- * Catatan: menu yang belum punya resep otomatis lolos pengecekan,
- * karena tidak ada bahan yang bisa dihitung kebutuhannya.
- */
 export async function cekStokCukup(
   connection: PoolConnection,
   items: { idMenu: number; jumlah: number }[]
@@ -26,9 +17,6 @@ export async function cekStokCukup(
   const idMenuList = items.map((i) => i.idMenu);
   const placeholderMenu = idMenuList.map(() => "?").join(", ");
 
-  // Kunci baris bahan yang terlibat, supaya tidak ada transaksi lain
-  // (misal kasir dan self-order bersamaan) yang menyerobot stok
-  // di antara pengecekan dan pengurangan.
   await connection.query(
     `SELECT b.id_bahan
      FROM Bahan_Baku b
@@ -38,7 +26,6 @@ export async function cekStokCukup(
     idMenuList
   );
 
-  // Susun daftar item jadi tabel sementara: (id_menu, jumlah)
   const unionItems = items.map(() => "SELECT ? AS id_menu, ? AS jumlah").join(" UNION ALL ");
   const params: number[] = [];
   for (const item of items) {

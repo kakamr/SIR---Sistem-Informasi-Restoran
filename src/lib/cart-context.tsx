@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import type { CartItemSelfOrder } from "@/lib/types";
 
 export interface DataPelanggan {
@@ -30,8 +30,8 @@ export function CartProvider({
   idMeja: string;
   children: React.ReactNode;
 }) {
-  const storageKey = `sir_cart_meja_${idMeja}`;
-  const dataPelangganKey = `sir_data_pelanggan_meja_${idMeja}`;
+  const storageKey = useMemo(() => `sir_cart_meja_${idMeja}`, [idMeja]);
+  const dataPelangganKey = useMemo(() => `sir_data_pelanggan_meja_${idMeja}`, [idMeja]);
   const [cartItems, setCartItems] = useState<CartItemSelfOrder[]>([]);
   const [dataPelanggan, setDataPelangganState] = useState<DataPelanggan>({});
 
@@ -41,7 +41,6 @@ export function CartProvider({
       try {
         setCartItems(JSON.parse(saved));
       } catch {
-        // ignore corrupted data
       }
     }
 
@@ -50,11 +49,9 @@ export function CartProvider({
       try {
         setDataPelangganState(JSON.parse(savedData));
       } catch {
-        // ignore corrupted data
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [storageKey, dataPelangganKey]);
 
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(cartItems));

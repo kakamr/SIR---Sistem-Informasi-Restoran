@@ -26,8 +26,6 @@ const DEFAULT_ROUTE_BY_ROLE: Record<RoleKaryawan, string> = {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Halaman login dan seluruh alur self-order pelanggan (/order/*)
-  // TIDAK memerlukan autentikasi staff sama sekali - lewati middleware ini
   if (pathname === "/login" || pathname.startsWith("/order")) {
     return NextResponse.next();
   }

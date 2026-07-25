@@ -86,7 +86,6 @@ export async function updateBahan(
 
 export async function deleteBahan(idBahan: number) {
   try {
-    // Cek dulu apakah bahan ini masih dipakai di Resep manapun
     const [resepRows] = await pool.query<RowDataPacket[]>(
       "SELECT COUNT(*) as jumlah FROM Resep WHERE id_bahan = ?",
       [idBahan]

@@ -24,8 +24,6 @@ export default function PesananClient({ initialPesanan }: { initialPesanan: Pesa
   const pesananList = data ?? initialPesanan;
 
   function bisaDibatalkan(pesanan: Pesanan) {
-    // Cuma boleh batal kalau pesanan masih diproses DAN
-    // koki belum mulai masak (tiket masih 'menunggu' atau belum ada tiket sama sekali)
     return (
       pesanan.statusPesanan === "diproses" &&
       (pesanan.statusTiket === "menunggu" || pesanan.statusTiket === null)

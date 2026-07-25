@@ -18,15 +18,14 @@ export default function PenyajianClient({ initialPesanan }: { initialPesanan: Pe
   const { toastMessage, dismissToast } = useNewItemNotification(
     pesananSiapSaji,
     (item) => item.idPesanan,
-    "/sounds/pesanan-siap.mp3" // ganti sesuai nama file audio kalian
+    "/sounds/pesanan-siap.mp3" 
   );
 
   useEffect(() => {
     if (!toastMessage) return;
     const timer = setTimeout(dismissToast, 3000);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toastMessage]);
+  }, [toastMessage, dismissToast]);
 
   useEffect(() => {
     if (!error) return;

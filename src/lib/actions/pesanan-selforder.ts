@@ -65,16 +65,12 @@ export async function createPesananSelfOrder(data: {
   try {
     await connection.beginTransaction();
 
-    // Validasi stok sebelum pelanggan diarahkan ke halaman pembayaran
     const stokError = await cekStokCukup(connection, data.cartItems);
     if (stokError) {
       await connection.rollback();
       return { success: false, message: stokError };
     }
 
-    // Data diri dicocokkan dulu dengan pelanggan lama lewat no telepon, lalu email.
-    // Kalau ketemu, id lama dipakai ulang dan datanya diperbarui. supaya tabel
-    // Pelanggan tetap jadi data master, bukan tumpukan duplikat per transaksi.
     let idPelanggan: number | null = null;
     const nama = data.namaPelanggan?.trim() || null;
     const telepon = data.noTelepon?.trim() || null;
@@ -99,7 +95,6 @@ export async function createPesananSelfOrder(data: {
       }
 
       if (idLama) {
-        // COALESCE dipakai supaya kolom lama tidak terhapus kalau kali ini dikosongkan
         await connection.query(
           `UPDATE Pelanggan SET
              nama_pelanggan = COALESCE(?, nama_pelanggan),
@@ -112,7 +107,6 @@ export async function createPesananSelfOrder(data: {
       } else {
         const [pelangganResult] = await connection.query<ResultSetHeader>(
           `INSERT INTO Pelanggan (nama_pelanggan, no_telepon, email) VALUES (?, ?, ?)`,
-          // nama_pelanggan NOT NULL di database, jadi perlu nilai cadangan
           [nama ?? "Tanpa Nama", telepon, email]
         );
         idPelanggan = pelangganResult.insertId;
@@ -165,11 +159,6 @@ export async function getPembayaranStatus(idPembayaran: number) {
   return rows[0] ?? null;
 }
 
-/**
- * Simulasi webhook payment gateway.
- * Nanti di produksi ini dipanggil oleh webhook Midtrans/Xendit dsb,
- * bukan dipanggil dari client dengan setTimeout.
- */
 export async function confirmPembayaranSelfOrder(idPembayaran: number) {
   const connection = await pool.getConnection();
   try {
@@ -192,7 +181,6 @@ export async function confirmPembayaranSelfOrder(idPembayaran: number) {
       [idPesanan]
     );
 
-    // Baru sekarang tiket dapur dibuat, karena self-order baru boleh masuk dapur setelah bayar
     const [maxUrutRows] = await connection.query<NextUrutRow[]>(
       "SELECT COALESCE(MAX(urutan_antrian), 0) + 1 AS next_urut FROM Tiket_Dapur"
     );
@@ -203,13 +191,11 @@ export async function confirmPembayaranSelfOrder(idPembayaran: number) {
 
     await connection.query("UPDATE Meja SET status_meja = 'terisi' WHERE id_meja = (SELECT id_meja FROM Pesanan WHERE id_pesanan = ?)", [idPesanan]);
 
-    // Kurangi stok + update status stok/menu (sama seperti alur kasir)
     const [detailRows] = await connection.query<DetailPesananRow[]>(
       "SELECT id_menu, jumlah FROM Detail_Pesanan WHERE id_pesanan = ?",
       [idPesanan]
     );
 
-    // Cek ulang: stok bisa saja habis dipakai kasir sejak pesanan ini dibuat
     const stokError = await cekStokCukup(
       connection,
       detailRows.map((d) => ({ idMenu: d.id_menu, jumlah: d.jumlah }))

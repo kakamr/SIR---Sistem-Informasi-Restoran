@@ -1,4 +1,3 @@
-// src/app/(kasir)/pesanan/page.tsx
 import Header from "@/components/layout/Header";
 import { getPesananList } from "@/lib/actions/pesanan";
 import PesananClient from "./PesananClient";

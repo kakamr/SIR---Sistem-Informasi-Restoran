@@ -57,10 +57,6 @@ export async function updateStatusTiket(idTiket: number, statusBaru: StatusTiket
       [statusBaru, waktuSelesai, idTiket]
     );
 
-    // PENTING: status_pesanan TIDAK diubah di sini.
-    // Koki menandai tiket "selesai" berarti masakan sudah siap,
-    // tapi pesanan baru benar-benar "selesai" setelah PELAYAN
-    // mengantarkannya ke pelanggan (lihat updateStatusPesanan di pesanan.ts).
 
     await connection.commit();
     revalidatePath("/antrian");

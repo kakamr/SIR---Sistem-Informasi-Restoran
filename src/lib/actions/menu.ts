@@ -13,7 +13,7 @@ interface MenuWithResepRow extends RowDataPacket {
   harga: number;
   deskripsi: string | null;
   instruksi_masak: string | null;
-  gambar_url: string | null; // tambahkan ini
+  gambar_url: string | null; 
   status_menu: "aktif" | "nonaktif";
 
   id_bahan: number | null;
@@ -50,7 +50,7 @@ export async function getMenuList(): Promise<Menu[]> {
         harga: Number(row.harga),
         deskripsi: row.deskripsi ?? undefined,
         instruksiMasak: row.instruksi_masak ?? undefined,
-        gambarUrl: row.gambar_url ?? undefined, // tambahkan ini
+        gambarUrl: row.gambar_url ?? undefined, 
         statusMenu: row.status_menu,
         bahan: [],
       });

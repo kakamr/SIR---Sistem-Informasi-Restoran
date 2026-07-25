@@ -20,10 +20,10 @@ interface CartPanelProps {
   onConfirmPembayaran: () => void;
   error: string;
   isEdit?: boolean;
-  totalDibayar?: number; // jumlah yang sudah dibayar sebelumnya (mode edit)
+  totalDibayar?: number; 
 }
 
-const PAJAK_PERSEN = 0.01; // contoh 1%, sesuaikan kebutuhan
+const PAJAK_PERSEN = 0.01; 
 
 export default function CartPanel({
   step,
@@ -47,7 +47,7 @@ export default function CartPanel({
     0
   );
   const pajak = Math.round(subtotal * PAJAK_PERSEN);
-  const diskon = 0; // TODO: logic diskon kalau ada
+  const diskon = 0; 
   const total = subtotal + pajak - diskon;
 
   if (step === "pembayaran") {
@@ -152,7 +152,7 @@ export default function CartPanel({
         </button>
       </div>
 
-      {/* Toggle Dine In / Take Away */}
+      {}
       <div className="flex gap-3 mb-4">
         <button
           onClick={() => onChangeJenisLayanan("dine_in")}
@@ -176,7 +176,7 @@ export default function CartPanel({
         </button>
       </div>
 
-      {/* Nomor Meja - hanya untuk Dine In */}
+      {}
       {jenisLayanan === "dine_in" && (
         <button
           onClick={onOpenTableModal}
@@ -191,7 +191,7 @@ export default function CartPanel({
         </button>
       )}
 
-      {/* List item cart */}
+      {}
       <div className="flex-1 overflow-y-auto flex flex-col gap-4">
         {cartItems.length === 0 && (
           <p className="text-black/40 text-center mt-8">Belum ada item</p>

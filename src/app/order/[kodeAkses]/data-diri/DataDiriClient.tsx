@@ -20,7 +20,6 @@ export default function DataDiriClient({ nomorMeja, kodeAkses }: DataDiriClientP
   function handleLanjut() {
     const emailBersih = email.trim();
 
-    // Email opsional, tapi kalau diisi harus formatnya valid
     if (emailBersih && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailBersih)) {
       setError("Format email tidak valid. Contoh: nama@mail.com");
       return;

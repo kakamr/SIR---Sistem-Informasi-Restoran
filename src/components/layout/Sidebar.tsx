@@ -46,7 +46,7 @@ export default function Sidebar({
       `}
     >
       <div>
-        {/* Header */}
+        {}
         <div className="relative h-24 border-b border-white/10 px-6 flex flex-col justify-center">
           <button
             onClick={onToggle}
@@ -64,7 +64,7 @@ export default function Sidebar({
           )}
         </div>
 
-        {/* Menu */}
+        {}
         <nav className="p-4 flex flex-col gap-2">
           {menuItems.map((item) => {
             const active = pathname === item.href;
@@ -106,7 +106,7 @@ export default function Sidebar({
         </nav>
       </div>
 
-      {/* Logout */}
+      {}
       <div className="p-4 border-t border-white/10">
         <button
           onClick={() => onLogout?.()}

@@ -98,7 +98,7 @@ export async function updateKaryawan(
     namaKaryawan: string;
     role: RoleKaryawan;
     username: string;
-    password?: string; // opsional - kalau kosong, password lama tidak diubah
+    password?: string; 
     noTelepon?: string;
   }
 ) {
@@ -118,7 +118,6 @@ export async function updateKaryawan(
         [data.namaKaryawan, data.role, data.username, passwordHash, data.noTelepon ?? null, idKaryawan]
       );
     } else {
-      // Password tidak diisi = tidak diubah, cukup update field lainnya
       await pool.query<ResultSetHeader>(
         "UPDATE Karyawan SET nama_karyawan = ?, role = ?, username = ?, no_telepon = ? WHERE id_karyawan = ?",
         [data.namaKaryawan, data.role, data.username, data.noTelepon ?? null, idKaryawan]

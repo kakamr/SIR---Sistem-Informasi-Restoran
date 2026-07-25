@@ -1,11 +1,4 @@
-// ============================================================
-// TYPE DEFINITIONS - Sistem Informasi Restoran (SIR)
-// Mengikuti struktur ERD: Pelanggan, Meja, Karyawan, Menu,
-// Bahan_Baku, Resep, Pesanan, Detail_Pesanan, Pembayaran,
-// Tiket_Dapur, Laporan
-// ============================================================
 
-// ---------- Enum-enum status ----------
 export type RoleKaryawan = "kasir" | "koki" | "pelayan" | "admin";
 
 export type StatusMeja = "kosong" | "terisi";
@@ -32,14 +25,13 @@ export type StatusPembayaran = "berhasil" | "gagal" | "menunggu";
 
 export type JenisLaporan = "harian" | "mingguan" | "bulanan" | "tahunan";
 
-// ---------- Entitas utama ----------
 
 export interface Pelanggan {
   idPelanggan: number;
   namaPelanggan: string;
   noTelepon?: string;
   email?: string;
-  username?: string; // opsional, untuk self-order
+  username?: string; 
 }
 
 export interface Meja {
@@ -57,8 +49,6 @@ export interface Karyawan {
   role: RoleKaryawan;
   username: string;
   noTelepon?: string;
-  // password_hash sengaja TIDAK dimasukkan ke type frontend
-  // karena tidak boleh pernah dikirim ke client
 }
 
 export interface Menu {
@@ -67,10 +57,10 @@ export interface Menu {
   kategori?: string;
   harga: number;
   deskripsi?: string;
-  instruksiMasak?: string; // field "Resep" di UI form (Img 14/15)
+  instruksiMasak?: string; 
   gambarUrl?: string;
   statusMenu: StatusMenu;
-  bahan?: ResepItem[]; // relasi many-to-many lewat Resep, dipakai saat form edit
+  bahan?: ResepItem[]; 
 }
 
 export interface BahanBaku {
@@ -90,7 +80,6 @@ export interface Resep {
   jumlahDibutuhkan: number;
 }
 
-// Bentuk gabungan Resep + data Bahan, dipakai di UI (chip "Beras - 100gr")
 export interface ResepItem {
   idBahan: number;
   namaBahan: string;
@@ -107,17 +96,17 @@ export interface Pesanan {
   nomorAntrian?: string;
   statusPesanan: StatusPesanan;
   statusTiket?: StatusTiket | null;
-  waktuPesan: string; // ISO date string
+  waktuPesan: string; 
   totalTagihan: number;
-  detailPesanan?: DetailPesanan[]; // di-include saat fetch detail
-  nomorMeja?: string; // denormalized, buat tampilan cepat (Img 4: "Meja 1")
+  detailPesanan?: DetailPesanan[]; 
+  nomorMeja?: string; 
 }
 
 export interface DetailPesanan {
   idDetail: number;
   idPesanan: number;
   idMenu: number;
-  namaMenu: string; // denormalized untuk tampilan langsung
+  namaMenu: string; 
   jumlah: number;
   hargaSatuan: number;
   subtotal: number;
@@ -155,9 +144,7 @@ export interface Laporan {
   fileLaporan?: string;
 }
 
-// ---------- Tipe khusus untuk UI (bukan dari ERD langsung) ----------
 
-// Item di keranjang/cart sebelum disubmit jadi Pesanan (Img 1,2)
 export interface CartItem {
   idMenu: number;
   namaMenu: string;
@@ -171,7 +158,6 @@ export interface CartItemSelfOrder extends CartItem {
   catatanItem?: string;
 }
 
-// Ringkasan dashboard Laporan (Img 5)
 export interface LaporanSummary {
   menuTersedia: number;
   totalPesanan: number;
@@ -179,7 +165,7 @@ export interface LaporanSummary {
   totalProfit: number;
   customerOnline: number;
   customerOnShop: number;
-  menuTerlaris: string; // tambahkan ini
+  menuTerlaris: string; 
   revenueByMonth: { bulan: string; total: number }[];
   transaksiHariIni: {
     orderHariIni: number;
@@ -190,24 +176,21 @@ export interface LaporanSummary {
   pesananTerbaru: Pesanan[];
 }
 
-// Session user setelah login (dipakai di middleware & context)
 export interface SessionUser {
   idKaryawan: number;
   namaKaryawan: string;
   role: RoleKaryawan;
 }
 
-// Data pesanan lama yang dimuat ke halaman Pemesanan saat mode edit
 export interface PesananEdit {
   idPesanan: number;
   idMeja: number | null;
   jenisLayanan: JenisLayanan;
-  metodePembayaran: string; // bisa metode kasir atau metode self-order
-  totalLama: number; // jumlah_bayar sebelum diedit, untuk hitung selisih
+  metodePembayaran: string; 
+  totalLama: number; 
   items: CartItem[];
 }
 
-// Data untuk struk kasir (dicetak lewat dialog print browser)
 export interface StrukKasirItem {
   namaMenu: string;
   jumlah: number;

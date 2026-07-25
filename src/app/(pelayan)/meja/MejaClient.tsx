@@ -38,7 +38,6 @@ export default function MejaClient({ initialMeja }: MejaClientProps) {
     if (!result.success) {
       alert(result.message);
     }
-    // Tidak perlu setState manual lagi - polling ambil alih dalam 3 detik
   }
 
   return (

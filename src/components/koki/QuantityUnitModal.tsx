@@ -6,7 +6,7 @@ import type { BahanBaku } from "@/lib/types";
 interface QuantityUnitModalProps {
   isOpen: boolean;
   onClose: () => void;
-  availableBahan: BahanBaku[]; // daftar bahan master untuk dipilih
+  availableBahan: BahanBaku[]; 
   onSubmit: (idBahan: number, namaBahan: string, jumlah: number, satuan: string) => void;
 }
 

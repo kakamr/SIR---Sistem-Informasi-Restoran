@@ -21,12 +21,12 @@ export default function EmptyTableModal({
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
       <div className="bg-[#fdf8f0] rounded-2xl w-[420px] p-8 shadow-xl">
 
-        {/* Judul */}
+        {}
         <h2 className="text-2xl font-bold text-center mb-3">
           Kosongkan Meja
         </h2>
 
-        {/* Isi */}
+        {}
         <p className="text-center text-black/70 leading-7">
           Apakah Anda yakin ingin mengubah
           <br />
@@ -42,7 +42,7 @@ export default function EmptyTableModal({
           sebelum mengubah status.
         </p>
 
-        {/* Tombol */}
+        {}
         <div className="flex gap-4 mt-8">
           <button
             onClick={onClose}

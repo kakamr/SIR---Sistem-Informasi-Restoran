@@ -1,6 +1,5 @@
 import mysql from "mysql2/promise";
 
-// Connection pool - dibuat sekali, dipakai ulang di semua Server Action
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,

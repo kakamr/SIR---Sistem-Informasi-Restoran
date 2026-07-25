@@ -5,7 +5,7 @@ import path from "path";
 import { randomUUID } from "crypto";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
+const MAX_SIZE_BYTES = 2 * 1024 * 1024; 
 
 interface UploadResult {
   success: boolean;

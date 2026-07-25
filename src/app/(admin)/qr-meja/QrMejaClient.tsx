@@ -21,7 +21,7 @@ export default function QrMejaClient({ qrList }: { qrList: QrMejaItem[] }) {
       const result = await generateKodeAksesMeja(idMeja);
       if (!result.success) alert(result.message);
       setGeneratingId(null);
-      window.location.reload(); // refresh supaya QR baru langsung kelihatan
+      window.location.reload(); 
     });
   }
 

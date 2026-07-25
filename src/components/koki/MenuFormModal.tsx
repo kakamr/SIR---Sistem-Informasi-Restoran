@@ -58,11 +58,11 @@ export default function MenuFormModal({
     const file = e.target.files?.[0] ?? null;
     if (!file) return;
 
-    const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+    const MAX_SIZE = 2 * 1024 * 1024; 
     setError("");
     if (file.size > MAX_SIZE) {
       setError(`Ukuran file terlalu besar (${(file.size / 1024 / 1024).toFixed(1)}MB). Maksimal 2MB.`);
-      e.target.value = ""; // reset input supaya file yang sama bisa dipilih ulang setelah dikompres
+      e.target.value = ""; 
       return;
     }
 
@@ -96,7 +96,6 @@ export default function MenuFormModal({
 
     let gambarUrl = gambarUrlLama;
 
-    // Upload gambar baru kalau user pilih file baru
     if (gambarFile) {
       setIsUploading(true);
       const formData = new FormData();
@@ -110,7 +109,6 @@ export default function MenuFormModal({
         return;
       }
 
-      // Hapus gambar lama dari disk kalau ini mode edit dan sebelumnya sudah ada gambar
       if (mode === "edit" && gambarUrlLama) {
         deleteGambarLama(gambarUrlLama);
       }

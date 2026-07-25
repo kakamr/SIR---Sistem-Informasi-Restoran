@@ -16,7 +16,7 @@ export default function MejaCard({
   return (
     <div className="bg-[#fdf8f0] rounded-xl p-6 flex flex-col shadow-sm">
 
-      {/* Header */}
+      {}
       <div className="flex justify-between items-center mb-5">
         <span className="font-bold text-lg">
           Meja
@@ -33,14 +33,14 @@ export default function MejaCard({
         </span>
       </div>
 
-      {/* Nomor Meja */}
+      {}
       <div className="flex justify-center mb-5">
         <div className="w-28 h-28 rounded-full bg-[#2d5a4a] text-white flex items-center justify-center text-5xl font-bold">
           {meja.nomorMeja.replace(/\D/g, "")}
         </div>
       </div>
 
-      {/* Informasi */}
+      {}
       <div className="space-y-2 text-sm mb-6">
 
         <div className="flex justify-between">

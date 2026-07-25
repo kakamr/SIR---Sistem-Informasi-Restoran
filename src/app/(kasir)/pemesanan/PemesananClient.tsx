@@ -61,8 +61,6 @@ export default function PemesananClient({
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>(pesananEdit?.items ?? []);
   const [metodeBayar, setMetodeBayar] = useState<"tunai" | "qris" | "edc" | null>(
-    // Metode self-order (gopay/dana/VA) tidak ada di pilihan kasir,
-    // jadi kalau pesanan berasal dari QR meja, kasir harus memilih ulang
     pesananEdit && ["tunai", "qris", "edc"].includes(pesananEdit.metodePembayaran)
       ? (pesananEdit.metodePembayaran as "tunai" | "qris" | "edc")
       : null
@@ -155,7 +153,6 @@ export default function PemesananClient({
 
     setError("");
 
-    // Simpan ringkasan dulu untuk ditampilkan di modal, sebelum cart di-reset
     setRingkasanBerhasil({
       jenisLayanan,
       selectedMeja,
@@ -172,7 +169,6 @@ export default function PemesananClient({
   function handleTutupModalBerhasil() {
     setRingkasanBerhasil(null);
     if (isEdit) {
-      // Selesai mengedit. balik ke daftar pesanan
       router.push("/pesanan");
       return;
     }

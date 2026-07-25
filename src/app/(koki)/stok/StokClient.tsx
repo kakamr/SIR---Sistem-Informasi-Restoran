@@ -1,4 +1,3 @@
-// src/app/(koki)/stok/StokClient.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -15,8 +14,6 @@ export default function StokClient({ initialBahanList }: { initialBahanList: Bah
   const [bahanToDelete, setBahanToDelete] = useState<BahanBaku | null>(null);
   const [error, setError] = useState("");
 
-  // Polling dijeda selama ada modal terbuka supaya daftarnya tidak berubah
-  // di bawah tangan koki saat sedang mengisi form atau konfirmasi hapus
   const { data } = usePolling(getBahanList, 3000, !isModalOpen && bahanToDelete === null);
   const bahanList = data ?? initialBahanList;
 
@@ -38,7 +35,6 @@ export default function StokClient({ initialBahanList }: { initialBahanList: Bah
 
   async function handleSubmitBahan(data: Omit<BahanBaku, "idBahan" | "statusStok">) {
     setError("");
-    // Hasilnya dikembalikan ke modal. modal yang menampilkan errornya inline
     if (editingBahan) {
       return await updateBahan(editingBahan.idBahan, data);
     }
@@ -54,7 +50,6 @@ export default function StokClient({ initialBahanList }: { initialBahanList: Bah
     if (!result.success) {
       setError(result.message ?? "Gagal menghapus bahan");
     }
-    // Daftar otomatis diperbarui lewat polling berikutnya
   }
 
   return (

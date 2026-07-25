@@ -3,17 +3,17 @@ import StatusBadge from "./StatusBadge";
 import type { DetailPesanan } from "@/lib/types";
 
 interface OrderCardProps {
-  title: string; // "Meja 1"
-  subtitle?: string; // tanggal, contoh "01 Juni 2026"
-  itemCount?: number; // "4 item"
-  status?: string; // badge status, opsional (Antrian koki tidak selalu perlu badge)
+  title: string; 
+  subtitle?: string; 
+  itemCount?: number; 
+  status?: string; 
   items: DetailPesanan[];
   total?: number;
-  actionLabel?: string; // "Mulai Masak" / "Selesai" / "Selesai Disajikan"
+  actionLabel?: string; 
   onAction?: () => void;
-  secondaryActionLabel?: string; // aksi sekunder, contoh "Edit Pesanan"
+  secondaryActionLabel?: string; 
   onSecondaryAction?: () => void;
-  extraAction?: React.ReactNode; // slot bebas, contoh tombol cetak struk
+  extraAction?: React.ReactNode; 
 }
 
 export default function OrderCard({

@@ -38,46 +38,39 @@ function formatTanggalPlain(dateString: string): string {
 
 export async function generateStrukCanvas(data: StrukData): Promise<HTMLCanvasElement> {
   const WIDTH = 400;
-  // Tinggi dihitung dinamis tergantung jumlah item + apakah ada catatan
   const baseHeight = 620;
   const perItemHeight = 26;
   const catatanExtra = data.items.filter((i) => i.catatanItem).length * 16;
   const HEIGHT = baseHeight + data.items.length * perItemHeight + catatanExtra;
 
   const canvas = document.createElement("canvas");
-  const scale = 2; // render 2x untuk hasil tajam (retina-like)
+  const scale = 2; 
   canvas.width = WIDTH * scale;
   canvas.height = HEIGHT * scale;
   const ctx = canvas.getContext("2d")!;
   ctx.scale(scale, scale);
 
-  // ---------- Background luar (abu-abu/beige) ----------
   ctx.fillStyle = "#e8e4dc";
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-  // ---------- Header (krem) ----------
   const headerHeight = 195;
   ctx.fillStyle = "#fdf8f0";
   roundRectTopOnly(ctx, 0, 0, WIDTH, headerHeight, 24);
   ctx.fill();
 
-  // Logo SIR
   ctx.fillStyle = "#2d5a4a";
   ctx.font = "bold 44px Arial";
   ctx.textAlign = "center";
   ctx.fillText("SIR", WIDTH / 2, 78);
 
-  // Subjudul
   ctx.fillStyle = "#4a4a4a";
   ctx.font = "16px Arial";
   ctx.fillText("Pembayaran Telah Berhasil", WIDTH / 2, 112);
 
-  // Total besar
   ctx.fillStyle = "#1a1a1a";
   ctx.font = "bold 32px Arial";
   ctx.fillText(formatRupiahPlain(data.totalPembayaran), WIDTH / 2, 155);
 
-  // ---------- Card Detail Transaksi ----------
   let y = headerHeight + 25;
   const cardX = 24;
   const cardWidth = WIDTH - 48;
@@ -102,7 +95,6 @@ export async function generateStrukCanvas(data: StrukData): Promise<HTMLCanvasEl
   y += 22;
   drawRow(ctx, "Metode Pembayaran", METODE_LABEL[data.metodePembayaran] ?? data.metodePembayaran, cardX + 20, cardWidth - 40, y);
 
-  // ---------- Card Detail Pesanan ----------
   y = headerHeight + 25 + 130 + 30;
   const itemsCardHeight = 45 + data.items.length * perItemHeight + catatanExtra;
 
@@ -137,7 +129,6 @@ export async function generateStrukCanvas(data: StrukData): Promise<HTMLCanvasEl
     y += 6;
   }
 
-  // ---------- Card Total ----------
   y += 25;
   ctx.fillStyle = "#fdf8f0";
   roundRect(ctx, cardX, y, cardWidth, 70, 16);
