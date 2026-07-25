@@ -1,4 +1,5 @@
-# SIR — Sistem Informasi Restoran
+# SIR
+# Sistem Informasi Restoran
 
 Sistem informasi restoran berbasis web yang mengelola alur operasional restoran secara menyeluruh: pemesanan (walk-in kasir maupun self-order via QR meja), dapur, penyajian, stok bahan baku, hingga laporan penjualan. Dibangun sebagai tugas mata kuliah Rekayasa Perangkat Lunak oleh **Tim Jaipong (IF-6)**, UNIKOM.
 
@@ -28,7 +29,7 @@ Sistem memodelkan restoran cepat saji modern dengan dua jalur pemesanan yang ber
 - Pemilihan menu dengan pencarian dan filter kategori
 - Dukungan dine-in (dengan pemilihan meja) dan take-away
 - Pembayaran tunai, QRIS, dan EDC
-- Edit pesanan selama makanan belum mulai dimasak — termasuk ganti meja, jenis layanan, dan metode bayar, lengkap dengan perhitungan selisih kurang bayar/kembalian
+- Edit pesanan selama makanan belum mulai dimasak. termasuk ganti meja, jenis layanan, dan metode bayar, lengkap dengan perhitungan selisih kurang bayar/kembalian
 - Pembatalan pesanan dengan pengembalian stok otomatis
 - Nomor antrian otomatis untuk take-away (format `A-01`, direset harian)
 - Cetak struk dan cetak ulang struk lewat dialog cetak browser (kompatibel printer thermal 80mm)
@@ -55,7 +56,7 @@ Sistem memodelkan restoran cepat saji modern dengan dua jalur pemesanan yang ber
 **Stok & menu otomatis**
 - Setiap menu terhubung ke bahan baku melalui tabel resep
 - Stok bahan berkurang otomatis sesuai resep saat pesanan dibuat
-- Validasi stok sebelum pesanan diterima — pesanan ditolak bila bahan tidak cukup
+- Validasi stok sebelum pesanan diterima. pesanan ditolak bila bahan tidak cukup
 - Menu dinonaktifkan otomatis saat salah satu bahannya habis, dan aktif kembali saat stok diisi ulang
 
 **Laporan (admin)**
@@ -94,7 +95,7 @@ Pelanggan scan QR → pilih menu → isi data diri (opsional) → pilih pembayar
    → bayar → tiket masuk dapur → koki masak → pelayan sajikan → selesai
 ```
 
-Status pesanan bergerak `menunggu_bayar → diproses → selesai` (atau `dibatalkan`). Tahap penyajian direpresentasikan lewat status tiket dapur (`selesai`), bukan lewat status pesanan — inilah alasan entitas Tiket Dapur dipisah dari Pesanan.
+Status pesanan bergerak `menunggu_bayar → diproses → selesai` (atau `dibatalkan`). Tahap penyajian direpresentasikan lewat status tiket dapur (`selesai`), bukan lewat status pesanan. inilah alasan entitas Tiket Dapur dipisah dari Pesanan.
 
 ---
 
@@ -117,12 +118,12 @@ Komunikasi data memakai **Server Actions** alih-alih REST API route, dan pembaru
 
 Beberapa keputusan teknis penting yang membentuk sistem ini:
 
-- **Server Actions, bukan API routes** — logika basis data dipanggil langsung dari komponen sebagai fungsi server, mengurangi boilerplate endpoint.
-- **Short polling dengan jeda saat idle** — daftar pesanan, antrian dapur, dan penyajian menyegar berkala; polling berhenti saat tab disembunyikan untuk menghemat koneksi.
-- **Stok berbasis resep** — pengurangan, validasi, penonaktifan, dan pengaktifan kembali menu semuanya bersumber dari relasi resep, disatukan dalam satu utilitas agar konsisten di semua alur.
-- **Transaksi basis data** — pembuatan pesanan, pembayaran, tiket dapur, dan penyesuaian stok dijalankan dalam satu transaksi; kegagalan di tengah otomatis di-rollback.
-- **Nomor antrian hanya untuk take-away** — dine-in sudah teridentifikasi lewat nomor meja, sehingga kolomnya sengaja bernilai NULL untuk dine-in.
-- **Pembatasan data operasional** — daftar pesanan kasir menampilkan 7 hari terakhir ditambah semua pesanan yang masih berjalan, menjaga performa saat volume data besar. Riwayat penuh tersedia di halaman Laporan.
+- **Server Actions, bukan API routes**. logika basis data dipanggil langsung dari komponen sebagai fungsi server, mengurangi boilerplate endpoint.
+- **Short polling dengan jeda saat idle**. daftar pesanan, antrian dapur, dan penyajian menyegar berkala; polling berhenti saat tab disembunyikan untuk menghemat koneksi.
+- **Stok berbasis resep**. pengurangan, validasi, penonaktifan, dan pengaktifan kembali menu semuanya bersumber dari relasi resep, disatukan dalam satu utilitas agar konsisten di semua alur.
+- **Transaksi basis data**. pembuatan pesanan, pembayaran, tiket dapur, dan penyesuaian stok dijalankan dalam satu transaksi; kegagalan di tengah otomatis di-rollback.
+- **Nomor antrian hanya untuk take-away**. dine-in sudah teridentifikasi lewat nomor meja, sehingga kolomnya sengaja bernilai NULL untuk dine-in.
+- **Pembatasan data operasional**. daftar pesanan kasir menampilkan 7 hari terakhir ditambah semua pesanan yang masih berjalan, menjaga performa saat volume data besar. Riwayat penuh tersedia di halaman Laporan.
 
 ---
 
@@ -237,7 +238,7 @@ Tipografi memakai **Geist** (sans-serif) dan **Geist Mono**.
 
 ## Tim Pengembang
 
-**Tim Jaipong — Kelas IF-6**
+**Tim Jaipong. Kelas IF-6**
 Program Studi Teknik Informatika, Universitas Komputer Indonesia (UNIKOM)
 
 Dikembangkan sebagai proyek mata kuliah Rekayasa Perangkat Lunak.
@@ -245,5 +246,5 @@ Dikembangkan sebagai proyek mata kuliah Rekayasa Perangkat Lunak.
 ---
 
 <p align="center">
-  <sub>SIR — Sistem Informasi Restoran · Tim Jaipong IF-6 · UNIKOM</sub>
+  <sub>SIR. Sistem Informasi Restoran · Tim Jaipong IF-6 · UNIKOM</sub>
 </p>

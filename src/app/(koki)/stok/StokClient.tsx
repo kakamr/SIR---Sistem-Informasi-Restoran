@@ -38,7 +38,7 @@ export default function StokClient({ initialBahanList }: { initialBahanList: Bah
 
   async function handleSubmitBahan(data: Omit<BahanBaku, "idBahan" | "statusStok">) {
     setError("");
-    // Hasilnya dikembalikan ke modal — modal yang menampilkan errornya inline
+    // Hasilnya dikembalikan ke modal. modal yang menampilkan errornya inline
     if (editingBahan) {
       return await updateBahan(editingBahan.idBahan, data);
     }

@@ -172,7 +172,7 @@ export default function PemesananClient({
   function handleTutupModalBerhasil() {
     setRingkasanBerhasil(null);
     if (isEdit) {
-      // Selesai mengedit — balik ke daftar pesanan
+      // Selesai mengedit. balik ke daftar pesanan
       router.push("/pesanan");
       return;
     }
@@ -191,7 +191,7 @@ export default function PemesananClient({
         <div className="mx-8 mt-4 flex items-center justify-between rounded-lg border border-[#2d5a4a] bg-[#fdf8f0] px-5 py-3">
           <p className="text-sm">
             Sedang mengedit <span className="font-bold">pesanan #{pesananEdit.idPesanan}</span>
-            {pesananEdit.idMeja === null && " (Take Away)"} — perubahan baru tersimpan setelah
+            {pesananEdit.idMeja === null && " (Take Away)"}. perubahan baru tersimpan setelah
             konfirmasi pembayaran.
           </p>
           <button

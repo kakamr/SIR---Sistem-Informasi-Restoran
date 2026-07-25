@@ -17,7 +17,7 @@ interface NextAntrianRow extends RowDataPacket {
 
 /**
  * Buat nomor antrian berikutnya untuk take away, format "A-01".
- * Nomor direset tiap hari — tanggal berganti, mulai lagi dari A-01.
+ * Nomor direset tiap hari. tanggal berganti, mulai lagi dari A-01.
  * WAJIB dipanggil di dalam transaksi.
  */
 async function buatNomorAntrian(connection: PoolConnection): Promise<string> {
@@ -160,14 +160,14 @@ export async function createPesananLengkap(data: {
   try {
     await connection.beginTransaction();
 
-    // 0. Validasi stok — pesanan ditolak kalau bahan baku tidak mencukupi
+    // 0. Validasi stok. pesanan ditolak kalau bahan baku tidak mencukupi
     const stokError = await cekStokCukup(connection, data.cartItems);
     if (stokError) {
       await connection.rollback();
       return { success: false, message: stokError };
     }
 
-    // 0c. Nomor antrian hanya untuk take away — dine in cukup pakai nomor meja
+    // 0c. Nomor antrian hanya untuk take away. dine in cukup pakai nomor meja
     const nomorAntrian =
       data.jenisLayanan === "take_away" ? await buatNomorAntrian(connection) : null;
 
@@ -522,7 +522,7 @@ export async function cancelPesanan(idPesanan: number) {
 
 /**
  * Ambil data pesanan untuk dimuat ke halaman Pemesanan saat mode edit.
- * Mengembalikan null kalau pesanan sudah tidak boleh diedit —
+ * Mengembalikan null kalau pesanan sudah tidak boleh diedit.
  * jadi kalau kasir memaksa buka /pemesanan?edit=xx, tetap ditolak.
  */
 export async function getPesananForEdit(idPesanan: number): Promise<PesananEdit | null> {
@@ -754,7 +754,7 @@ export async function updatePesananLengkap(data: {
 
 /**
  * Ambil data struk kasir. Dipakai untuk cetak pertama kali maupun cetak ulang,
- * jadi angkanya selalu diambil dari database — bukan dari state di layar.
+ * jadi angkanya selalu diambil dari database. bukan dari state di layar.
  */
 export async function getStrukKasir(idPesanan: number): Promise<StrukKasirData | null> {
   const [rows] = await pool.query<StrukKasirRow[]>(

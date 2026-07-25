@@ -73,7 +73,7 @@ export async function createPesananSelfOrder(data: {
     }
 
     // Data diri dicocokkan dulu dengan pelanggan lama lewat no telepon, lalu email.
-    // Kalau ketemu, id lama dipakai ulang dan datanya diperbarui — supaya tabel
+    // Kalau ketemu, id lama dipakai ulang dan datanya diperbarui. supaya tabel
     // Pelanggan tetap jadi data master, bukan tumpukan duplikat per transaksi.
     let idPelanggan: number | null = null;
     const nama = data.namaPelanggan?.trim() || null;

@@ -55,7 +55,7 @@ export default function DataDiriClient({ nomorMeja, kodeAkses }: DataDiriClientP
       <div className="px-5 pt-5">
         <h2 className="font-bold text-lg mb-1">Data Diri</h2>
         <p className="text-sm text-black/50 mb-5">
-          Opsional — boleh dilewati kalau tidak ingin mengisi.
+          Opsional. boleh dilewati kalau tidak ingin mengisi.
         </p>
 
         <div className="flex flex-col gap-4">

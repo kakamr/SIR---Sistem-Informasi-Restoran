@@ -67,5 +67,5 @@ export async function cekStokCukup(
     )
     .join("; ");
 
-  return `Stok bahan tidak mencukupi — ${detail}`;
+  return `Stok bahan tidak mencukupi. ${detail}`;
 }
