@@ -2,21 +2,17 @@
 
 import { useState } from "react";
 import { usePolling } from "@/lib/hooks/usePolling";
-import {
-  getKaryawanList,
-  createKaryawan,
-  updateKaryawan,
-  deleteKaryawan,
-  type KaryawanListItem,
-} from "@/lib/actions/karyawan";
+import { getKaryawanList, createKaryawan, updateKaryawan, deleteKaryawan, type KaryawanListItem, } from "@/lib/actions/karyawan";
 import StaffFormModal from "@/components/admin/StaffFormModal";
 import ConfirmDeleteModal from "@/components/shared/ConfirmDeleteModal";
+import { RoleKaryawan } from "@/lib/types";
 
 const ROLE_LABEL: Record<string, string> = {
   kasir: "Kasir",
   koki: "Koki",
   pelayan: "Pelayan",
   admin: "Admin",
+  pemilik: "Pemilik",
 };
 
 export default function KelolaStaffClient({ initialStaff }: { initialStaff: KaryawanListItem[] }) {
@@ -39,7 +35,7 @@ export default function KelolaStaffClient({ initialStaff }: { initialStaff: Kary
 
   async function handleSubmit(formData: {
     namaKaryawan: string;
-    role: "kasir" | "koki" | "pelayan" | "admin";
+    role: RoleKaryawan;
     username: string;
     password: string;
     noTelepon?: string;
