@@ -206,7 +206,7 @@ export default function CartPanel({
                   alt={item.namaMenu}
                   width={56}
                   height={56}
-                  className="object-cover rounded-lg"
+                  className="w-full aspect-square object-cover rounded-lg mb-4"
                 />
               ) : (
                 <div className="w-14 h-14 bg-gray-300 rounded-lg shrink-0" />

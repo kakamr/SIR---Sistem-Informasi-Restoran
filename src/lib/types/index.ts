@@ -1,5 +1,5 @@
 
-export type RoleKaryawan = "kasir" | "koki" | "pelayan" | "admin";
+export type RoleKaryawan = "kasir" | "koki" | "pelayan" | "admin" | "pemilik";
 
 export type StatusMeja = "kosong" | "terisi";
 

@@ -4,15 +4,13 @@ import type { RoleKaryawan } from "@/lib/types";
 const ROLE_ROUTE_MAP: { prefix: string; role: RoleKaryawan }[] = [
   { prefix: "/pemesanan", role: "kasir" },
   { prefix: "/pesanan", role: "kasir" },
-  { prefix: "/laporan", role: "kasir" },
   { prefix: "/antrian", role: "koki" },
   { prefix: "/menu", role: "koki" },
   { prefix: "/stok", role: "koki" },
   { prefix: "/penyajian", role: "pelayan" },
   { prefix: "/meja", role: "pelayan" },
-  { prefix: "/admin-laporan", role: "admin" },
+  { prefix: "/laporan", role: "pemilik" },
   { prefix: "/kelola-meja", role: "admin" },
-  { prefix: "/qr-meja", role: "admin" },
   { prefix: "/kelola-staff", role: "admin" },
 ];
 
@@ -20,7 +18,8 @@ const DEFAULT_ROUTE_BY_ROLE: Record<RoleKaryawan, string> = {
   kasir: "/pemesanan",
   koki: "/antrian",
   pelayan: "/penyajian",
-  admin: "/admin-laporan",
+  admin: "/kelola-staff",
+  pemilik: "/laporan",
 };
 
 export function middleware(request: NextRequest) {

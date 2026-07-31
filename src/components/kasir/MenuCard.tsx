@@ -66,7 +66,7 @@ export default function MenuCard({
         <button
           onClick={handleKurang}
           disabled={qty === 0}
-          className="w-10 h-10 bg-[#2d5a4a] text-white rounded-lg font-bold disabled:opacity-40"
+          className="w-15 h-15 bg-[#2d5a4a] text-white rounded-lg font-bold disabled:opacity-40"
         >
           −
         </button>
@@ -77,7 +77,7 @@ export default function MenuCard({
 
         <button
           onClick={handleTambah}
-          className="w-10 h-10 bg-[#2d5a4a] text-white rounded-lg font-bold"
+          className="w-15 h-15 bg-[#2d5a4a] text-white rounded-lg font-bold"
         >
           +
         </button>

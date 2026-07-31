@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { usePolling } from "@/lib/hooks/usePolling";
 import { getMejaList, createMeja, deleteMeja } from "@/lib/actions/meja";
+import { generateKodeAksesMeja } from "@/lib/actions/qr";
 import MejaFormModal from "@/components/admin/MejaFormModal";
 import ConfirmDeleteModal from "@/components/shared/ConfirmDeleteModal";
 import type { Meja } from "@/lib/types";
@@ -10,8 +11,14 @@ import type { Meja } from "@/lib/types";
 export default function KelolaMejaClient({ initialMeja }: { initialMeja: Meja[] }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mejaToDelete, setMejaToDelete] = useState<Meja | null>(null);
+  const [generatingId, setGeneratingId] = useState<number | null>(null);
+  const [isPending, startTransition] = useTransition();
 
-  const { data } = usePolling(getMejaList, 5000, !isModalOpen && !mejaToDelete);
+  const { data } = usePolling(
+    getMejaList,
+    5000,
+    !isModalOpen && !mejaToDelete && generatingId === null
+  );
   const mejaList = data ?? initialMeja;
 
   async function handleCreate(data: { nomorMeja: string; kapasitas: number }) {
@@ -29,9 +36,28 @@ export default function KelolaMejaClient({ initialMeja }: { initialMeja: Meja[] 
     setMejaToDelete(null);
   }
 
+  function handleGenerateQr(idMeja: number) {
+    setGeneratingId(idMeja);
+    startTransition(async () => {
+      const result = await generateKodeAksesMeja(idMeja);
+      if (!result.success) alert(result.message);
+      setGeneratingId(null);
+    });
+  }
+
+  function handlePrintQr() {
+    window.open("/qr-print", "_blank", "width=900,height=900");
+  }
+
   return (
     <main className="flex-1 p-8 overflow-y-auto">
-      <div className="flex justify-end mb-6">
+      <div className="flex justify-end gap-3 mb-6">
+        <button
+          onClick={handlePrintQr}
+          className="border-2 border-[#2d5a4a] text-[#2d5a4a] font-semibold px-6 py-3 rounded-lg"
+        >
+          Cetak QR Semua Meja
+        </button>
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-[#2d5a4a] text-white font-semibold px-6 py-3 rounded-lg"
@@ -43,10 +69,10 @@ export default function KelolaMejaClient({ initialMeja }: { initialMeja: Meja[] 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {mejaList.map((meja) => {
           const isTerisi = meja.statusMeja === "terisi";
+          const punyaQr = Boolean(meja.qrCode);
 
           return (
             <div key={meja.idMeja} className="bg-[#fdf8f0] rounded-xl p-6 flex flex-col shadow-sm">
-              {}
               <div className="flex justify-between items-center mb-5">
                 <span className="font-bold text-lg">Meja</span>
                 <span
@@ -58,14 +84,12 @@ export default function KelolaMejaClient({ initialMeja }: { initialMeja: Meja[] 
                 </span>
               </div>
 
-              {}
               <div className="flex justify-center mb-5">
                 <div className="w-28 h-28 rounded-full bg-[#2d5a4a] text-white flex items-center justify-center text-5xl font-bold">
                   {meja.nomorMeja.replace(/\D/g, "")}
                 </div>
               </div>
 
-              {}
               <div className="space-y-2 text-sm mb-6">
                 <div className="flex justify-between">
                   <span className="text-black/60">Nomor</span>
@@ -77,13 +101,26 @@ export default function KelolaMejaClient({ initialMeja }: { initialMeja: Meja[] 
                 </div>
                 <div className="flex justify-between">
                   <span className="text-black/60">QR</span>
-                  <span className="font-semibold truncate max-w-[120px] text-right">
-                    {meja.qrCode ?? "-"}
+                  <span
+                    className={`font-semibold ${punyaQr ? "text-green-700" : "text-black/40"}`}
+                  >
+                    {punyaQr ? "Sudah ada" : "Belum ada"}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-auto">
+              <div className="mt-auto flex flex-col gap-2">
+                {!punyaQr && (
+                  <button
+                    onClick={() => handleGenerateQr(meja.idMeja)}
+                    disabled={isPending && generatingId === meja.idMeja}
+                    className="w-full py-3 rounded-lg bg-[#2d5a4a] text-white font-semibold disabled:opacity-50"
+                  >
+                    {isPending && generatingId === meja.idMeja
+                      ? "Memproses..."
+                      : "Generate QR"}
+                  </button>
+                )}
                 <button
                   onClick={() => setMejaToDelete(meja)}
                   className="w-full py-3 rounded-lg border border-red-500 text-red-500 font-semibold hover:bg-red-50 transition-colors"

@@ -8,7 +8,7 @@ export default function Header({
   pageTitle,
 }: HeaderProps) {
   return (
-    <header className="h-24 bg-[#fdf8f0] border-b border-black/10 flex items-center px-8">
+    <header className="sticky top-0 z-20 h-24 bg-[#fdf8f0] border-b border-black/10 flex items-center px-8">
       <div className="flex flex-col">
         <p className="text-sm text-black/70">
           {dashboardLabel}

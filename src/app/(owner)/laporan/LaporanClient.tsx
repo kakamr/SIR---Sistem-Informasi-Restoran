@@ -30,23 +30,25 @@ export default function LaporanClient({ initialSummary }: { initialSummary: Lapo
 
         <div className="bg-[#fdf8f0] rounded-xl p-6 flex flex-col">
           <h3 className="font-bold text-lg mb-6">Customer</h3>
+          <div className="flex-1 flex flex-col justify-start pt-10">
           <div className="flex items-baseline justify-center gap-4 mb-6">
             <span className="text-5xl font-bold">{summary.customerOnline}</span>
             <span className="text-black/30 text-2xl">|</span>
             <span className="text-5xl font-bold">{summary.customerOnShop}</span>
           </div>
-          <div className="flex justify-center gap-8 text-sm text-black/60 mb-4">
+          <div className="flex justify-center gap-8 text-sm text-black/60 mb-7">
             <span>Online</span>
             <span>On-Shop</span>
           </div>
           <div
-            className="h-10 rounded-lg overflow-hidden grid"
+            className="h-15 rounded-lg overflow-hidden grid"
             style={{
               gridTemplateColumns: `${summary.customerOnline}fr ${summary.customerOnShop}fr`,
             }}
           >
             <div className="bg-[#2d5a4a] h-full" />
             <div className="bg-[#7ba88f] h-full" />
+          </div>
           </div>
         </div>
       </div>
@@ -69,7 +71,9 @@ export default function LaporanClient({ initialSummary }: { initialSummary: Lapo
           <div className="flex flex-col gap-3 max-h-[100px] overflow-y-auto pr-2">
             {summary.pesananTerbaru.map((p) => (
               <div key={p.idPesanan} className="bg-[#2d5a4a] text-white rounded-lg p-4 flex items-center gap-3">
-                <span className="w-10 h-10 bg-white/20 rounded shrink-0" />
+                <span className="px-3 py-2 bg-white/20 rounded-lg shrink-0 text-xs font-semibold text-center leading-tight">
+                  {p.jenisLayanan === "dine_in" ? "Dine In" : "Take Away"}
+                </span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold truncate">Pesanan #{p.idPesanan}</p>
                   <p className="text-xs text-white/70">{formatTanggal(p.waktuPesan)}</p>
