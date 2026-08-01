@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import TagInput from "@/components/shared/TagInput";
-import { uploadGambarBahan, deleteGambarLama } from "@/lib/actions/upload";
+import { uploadGambarBahan } from "@/lib/actions/upload";
 import type { BahanBaku } from "@/lib/types";
 
 const SATUAN_OPTIONS = ["Kg", "gram", "liter", "ml", "butir", "pcs", "ikat"];
@@ -99,10 +99,6 @@ export default function BahanFormModal({
       if (!uploadResult.success) {
         setError(uploadResult.message ?? "Gagal upload gambar");
         return;
-      }
-
-      if (mode === "edit" && gambarUrlLama) {
-        deleteGambarLama(gambarUrlLama);
       }
 
       gambarUrl = uploadResult.url;

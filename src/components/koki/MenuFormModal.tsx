@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import QuantityUnitModal from "./QuantityUnitModal";
 import TagInput from "@/components/shared/TagInput";
-import { uploadGambarMenu, deleteGambarLama } from "@/lib/actions/upload";
+import { uploadGambarMenu } from "@/lib/actions/upload";
 import type { Menu, BahanBaku, ResepItem } from "@/lib/types";
 
 interface MenuFormModalProps {
@@ -107,10 +107,6 @@ export default function MenuFormModal({
       if (!uploadResult.success) {
         setError(uploadResult.message ?? "Gagal upload gambar");
         return;
-      }
-
-      if (mode === "edit" && gambarUrlLama) {
-        deleteGambarLama(gambarUrlLama);
       }
 
       gambarUrl = uploadResult.url;

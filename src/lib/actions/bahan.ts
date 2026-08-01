@@ -5,6 +5,7 @@ import pool from "@/lib/db";
 import type { RowDataPacket, ResultSetHeader } from "mysql2";
 import type { BahanBaku } from "@/lib/types";
 import { sinkronkanStokDanMenu } from "@/lib/utils/sinkron-menu";
+import { deleteGambarLama } from "@/lib/actions/upload";
 
 interface BahanRow extends RowDataPacket {
   id_bahan: number;
@@ -67,11 +68,21 @@ export async function updateBahan(
   data: { namaBahan: string; satuan: string; gambarUrl?: string; stokTersedia: number; batasMinimum: number }
 ) {
   try {
+    const [gambarLamaRows] = await pool.query<RowDataPacket[]>(
+      "SELECT gambar_url FROM Bahan_Baku WHERE id_bahan = ?",
+      [idBahan]
+    );
+    const gambarLama: string | null = gambarLamaRows[0]?.gambar_url ?? null;
+
     const statusStok = hitungStatusStok(data.stokTersedia, data.batasMinimum);
     await pool.query(
       "UPDATE Bahan_Baku SET nama_bahan = ?, satuan = ?, gambar_url = ?, stok_tersedia = ?, batas_minimum = ?, status_stok = ? WHERE id_bahan = ?",
       [data.namaBahan, data.satuan, data.gambarUrl ?? null, data.stokTersedia, data.batasMinimum, statusStok, idBahan]
     );
+
+    if (gambarLama && gambarLama !== data.gambarUrl) {
+      await deleteGambarLama(gambarLama);
+    }
     await sinkronkanStokDanMenu(pool);
 
     revalidatePath("/stok");
@@ -98,7 +109,18 @@ export async function deleteBahan(idBahan: number) {
       };
     }
 
+    const [gambarRows] = await pool.query<RowDataPacket[]>(
+      "SELECT gambar_url FROM Bahan_Baku WHERE id_bahan = ?",
+      [idBahan]
+    );
+    const gambarBahan: string | null = gambarRows[0]?.gambar_url ?? null;
+
     await pool.query("DELETE FROM Bahan_Baku WHERE id_bahan = ?", [idBahan]);
+
+    if (gambarBahan) {
+      await deleteGambarLama(gambarBahan);
+    }
+
     revalidatePath("/stok");
     return { success: true };
   } catch (error) {

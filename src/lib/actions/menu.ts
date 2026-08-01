@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import pool from "@/lib/db";
 import type { RowDataPacket, ResultSetHeader } from "mysql2";
 import type { Menu, ResepItem } from "@/lib/types";
-import { sinkronkanStokDanMenu } from "@/lib/utils/sinkron-menu";;
+import { sinkronkanStokDanMenu } from "@/lib/utils/sinkron-menu";
+import { deleteGambarLama } from "@/lib/actions/upload";
 
 interface MenuWithResepRow extends RowDataPacket {
   id_menu: number;
@@ -137,6 +138,14 @@ export async function updateMenu(
   try {
     await connection.beginTransaction();
 
+    // Ambil gambar lama dulu — untuk dihapus setelah update sukses, tapi hanya
+    // kalau gambarnya benar-benar berganti
+    const [gambarLamaRows] = await connection.query<RowDataPacket[]>(
+      "SELECT gambar_url FROM Menu WHERE id_menu = ?",
+      [idMenu]
+    );
+    const gambarLama: string | null = gambarLamaRows[0]?.gambar_url ?? null;
+
     await connection.query<ResultSetHeader>(
       "UPDATE Menu SET nama_menu = ?, kategori = ?, harga = ?, deskripsi = ?, instruksi_masak = ?, gambar_url = ? WHERE id_menu = ?",
       [data.namaMenu, data.kategori ?? null, data.harga, data.deskripsi ?? null, data.instruksiMasak ?? null, data.gambarUrl ?? null, idMenu]
@@ -154,6 +163,12 @@ export async function updateMenu(
     await sinkronkanStokDanMenu(connection);
 
     await connection.commit();
+
+    // Gambar lama dihapus hanya jika benar-benar diganti dengan yang berbeda
+    if (gambarLama && gambarLama !== data.gambarUrl) {
+      await deleteGambarLama(gambarLama);
+    }
+
     revalidatePath("/menu");
     revalidatePath("/pemesanan");
     return { success: true };
@@ -181,8 +196,15 @@ export async function deleteMenu(idMenu: number) {
     }
 
     const connection = await pool.getConnection();
+    let gambarMenu: string | null = null;
     try {
       await connection.beginTransaction();
+      const [gambarRows] = await connection.query<RowDataPacket[]>(
+        "SELECT gambar_url FROM Menu WHERE id_menu = ?",
+        [idMenu]
+      );
+      gambarMenu = gambarRows[0]?.gambar_url ?? null;
+
       await connection.query<ResultSetHeader>("DELETE FROM Resep WHERE id_menu = ?", [idMenu]);
       await connection.query<ResultSetHeader>("DELETE FROM Menu WHERE id_menu = ?", [idMenu]);
       await connection.commit();
@@ -191,6 +213,10 @@ export async function deleteMenu(idMenu: number) {
       throw err;
     } finally {
       connection.release();
+    }
+
+    if (gambarMenu) {
+      await deleteGambarLama(gambarMenu);
     }
 
     revalidatePath("/menu");
