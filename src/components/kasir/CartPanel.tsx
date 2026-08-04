@@ -291,7 +291,7 @@ function SelisihBayar({
   const selisih = totalBaru - totalDibayar;
 
   return (
-    <div className="mt-4 rounded-lg bg-white border border-black/10 p-4 flex flex-col gap-1.5 text-sm">
+    <div className="mt-4 rounded-lg bg-[#fdf8f0] border border-black/10 p-4 flex flex-col gap-1.5 text-sm">
       <div className="flex justify-between text-black/60">
         <span>Sudah dibayar</span>
         <span>{formatRupiah(totalDibayar)}</span>

@@ -29,6 +29,7 @@ export default function MenuManageCard({
           className="w-full aspect-square object-cover rounded-lg mb-4"
           width={200}
           height={200}
+          unoptimized
         />
       ) : (
         <div className="w-full aspect-square bg-gray-300 rounded-lg mb-4" />

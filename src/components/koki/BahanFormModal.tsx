@@ -7,7 +7,7 @@ import { uploadGambarBahan } from "@/lib/actions/upload";
 import type { BahanBaku } from "@/lib/types";
 
 const SATUAN_OPTIONS = ["Kg", "gram", "liter", "ml", "butir", "pcs", "ikat"];
-const MAX_SIZE_BYTES = 2 * 1024 * 1024; 
+const MAX_SIZE_BYTES = 2 * 1024 * 1024;
 
 interface BahanFormModalProps {
   isOpen: boolean;
@@ -86,6 +86,7 @@ export default function BahanFormModal({
       return;
     }
 
+    // Mulai dari gambar lama — kalau tidak ada file baru dipilih, ini yang tetap dipakai
     let gambarUrl = gambarUrlLama;
 
     if (gambarFile) {
@@ -96,11 +97,13 @@ export default function BahanFormModal({
       const uploadResult = await uploadGambarBahan(formData);
       setIsUploading(false);
 
-      if (!uploadResult.success) {
+      if (!uploadResult.success || !uploadResult.url) {
         setError(uploadResult.message ?? "Gagal upload gambar");
         return;
       }
 
+      // INI BAGIAN YANG HILANG SEBELUMNYA — tanpa baris ini, gambarUrl
+      // tetap memegang URL lama walau upload baru sudah berhasil
       gambarUrl = uploadResult.url;
     }
 
@@ -154,9 +157,7 @@ export default function BahanFormModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold mb-2">
-              Kuantitas/Berat
-            </label>
+            <label className="block text-sm font-semibold mb-2">Kuantitas/Berat</label>
             <input
               type="number"
               value={stokTersedia}
@@ -167,9 +168,7 @@ export default function BahanFormModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold mb-2">
-              Satuan Kuantitas/Berat
-            </label>
+            <label className="block text-sm font-semibold mb-2">Satuan Kuantitas/Berat</label>
             <TagInput
               tags={selectedSatuan}
               onRemove={handleRemoveSatuan}
@@ -180,9 +179,7 @@ export default function BahanFormModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold mb-2">
-              Batas Minimum Stok
-            </label>
+            <label className="block text-sm font-semibold mb-2">Batas Minimum Stok</label>
             <input
               type="number"
               value={batasMinimum}
@@ -199,9 +196,9 @@ export default function BahanFormModal({
                 <Image
                   src={gambarPreview}
                   alt="Preview"
-                  width={40}
-                  height={40}
-                  className="object-cover rounded w-10 h-10"
+                  width={100}
+                  height={100}
+                  className="object-cover rounded w-[100px] h-[100px]"
                   unoptimized={gambarPreview.startsWith("blob:")}
                 />
               ) : (
@@ -228,7 +225,6 @@ export default function BahanFormModal({
         </div>
       </div>
 
-      {}
       {isSatuanPickerOpen && (
         <div
           className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]"

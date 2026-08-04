@@ -183,24 +183,24 @@ export default function PemesananClient({
         pageTitle={isEdit ? "Edit Pesanan" : "Pemesanan"}
       />
 
-      {isEdit && (
-        <div className="mx-8 mt-4 flex items-center justify-between rounded-lg border border-[#2d5a4a] bg-[#fdf8f0] px-5 py-3">
-          <p className="text-sm">
-            Sedang mengedit <span className="font-bold">pesanan #{pesananEdit.idPesanan}</span>
-            {pesananEdit.idMeja === null && " (Take Away)"}. perubahan baru tersimpan setelah
-            konfirmasi pembayaran.
-          </p>
-          <button
-            onClick={() => router.push("/pesanan")}
-            className="text-sm font-semibold text-[#2d5a4a] underline shrink-0 ml-4"
-          >
-            Batal Edit
-          </button>
-        </div>
-      )}
-
       <div className="flex-1 flex h-[calc(100vh-96px)] overflow-hidden">
         <main className="flex-1 p-8 overflow-y-auto">
+          {isEdit && (
+            <div className="flex items-center justify-between rounded-lg bg-[#fdf8f0] px-5 py-3 mb-4">
+              <p className="text-sm">
+                Sedang mengedit <span className="font-bold">pesanan #{pesananEdit.idPesanan}</span>
+                {pesananEdit.idMeja === null && " (Take Away)"}. perubahan baru tersimpan setelah
+                konfirmasi pembayaran.
+              </p>
+              <button
+                onClick={() => router.push("/pesanan")}
+                className="text-sm font-semibold text-[#2d5a4a] underline shrink-0 ml-4"
+              >
+                Batal Edit
+              </button>
+            </div>
+          )}
+
           <div className="flex items-center gap-4 mb-4">
             <h2 className="font-bold text-lg shrink-0">Menu</h2>
             <div className="flex-1 relative">
@@ -211,8 +211,8 @@ export default function PemesananClient({
                 className="w-full bg-[#fdf8f0] border border-black/10 rounded-full pl-4 pr-11 py-2.5 outline-none"
               />
               <Image
-                src="/icons/selforder/search.png"
-                alt="Cari"
+                src="/icons/selforder/Search.png"
+                alt="Cari menu"
                 width={20}
                 height={20}
                 className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"

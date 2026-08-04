@@ -11,6 +11,7 @@ interface BahanRow extends RowDataPacket {
   id_bahan: number;
   nama_bahan: string;
   satuan: string;
+  gambar_url: string | null;
   stok_tersedia: number;
   batas_minimum: number;
   status_stok: "aman" | "menipis" | "habis";
@@ -21,6 +22,7 @@ function mapRow(row: BahanRow): BahanBaku {
     idBahan: row.id_bahan,
     namaBahan: row.nama_bahan,
     satuan: row.satuan,
+    gambarUrl: row.gambar_url ?? undefined,
     stokTersedia: Number(row.stok_tersedia),
     batasMinimum: Number(row.batas_minimum),
     statusStok: row.status_stok,

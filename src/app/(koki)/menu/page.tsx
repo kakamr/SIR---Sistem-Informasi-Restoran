@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Header from "@/components/layout/Header";
 import { getMenuList } from "@/lib/actions/menu";
 import { getBahanList } from "@/lib/actions/bahan";

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar, { SidebarMenuItem } from "./Sidebar";
+import ConfirmDeleteModal from "@/components/shared/ConfirmDeleteModal";
 import { logout } from "@/lib/actions/auth";
 
 interface DashboardLayoutProps {
@@ -15,10 +16,11 @@ export default function DashboardLayout({
   menuItems,
 }: DashboardLayoutProps) {
   const router = useRouter();
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
 
-  async function handleLogout() {
+  async function handleConfirmLogout() {
+    setIsLogoutConfirmOpen(false);
     await logout();
     router.push("/login");
     router.refresh();
@@ -28,11 +30,10 @@ export default function DashboardLayout({
     <div className="h-screen bg-[#e2e2e2] overflow-hidden print:hidden">
       <Sidebar
         menuItems={menuItems}
-        onLogout={handleLogout}
+        onLogout={() => setIsLogoutConfirmOpen(true)}
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen((prev) => !prev)}
       />
-
       <main
         className={`
           h-screen
@@ -47,6 +48,16 @@ export default function DashboardLayout({
       >
         {children}
       </main>
+
+    <ConfirmDeleteModal
+        isOpen={isLogoutConfirmOpen}
+        title="Keluar"
+        description="Apakah Anda yakin ingin keluar dari akun ini?"
+        confirmLabel="Keluar"
+        variant="primary"
+        onClose={() => setIsLogoutConfirmOpen(false)}
+        onConfirm={handleConfirmLogout}
+      />
     </div>
   );
 }

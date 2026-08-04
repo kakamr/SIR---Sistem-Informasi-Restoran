@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getMenuList } from "@/lib/actions/menu";
 import { getMejaList } from "@/lib/actions/meja";
 import { getSession } from "@/lib/actions/auth";

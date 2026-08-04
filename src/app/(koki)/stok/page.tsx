@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Header from "@/components/layout/Header";
 import { getBahanList } from "@/lib/actions/bahan";
 import StokClient from "./StokClient";

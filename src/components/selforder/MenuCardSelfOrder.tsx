@@ -28,6 +28,7 @@ export default function MenuCardSelfOrder({ menu }: { menu: Menu }) {
               alt={menu.namaMenu}
               fill
               className="object-cover rounded-lg"
+              unoptimized
             />
           ) : (
             <div className="w-20 h-20 bg-gray-300 rounded-lg shrink-0" />
