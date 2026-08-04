@@ -131,7 +131,7 @@ export default function BahanFormModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl p-8 w-full max-w-lg my-8"
+        className="bg-[#fdf8f0] rounded-2xl p-8 w-full max-w-lg my-8"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-2xl font-bold mb-6">
@@ -202,7 +202,14 @@ export default function BahanFormModal({
                   unoptimized={gambarPreview.startsWith("blob:")}
                 />
               ) : (
-                <span className="w-10 h-10 bg-gray-200 rounded" />
+                <span className="w-10 h-10 flex items-center justify-center rounded">
+                  <Image
+                    src="/icons/button/upload.png"
+                    alt="Upload"
+                    width={20}
+                    height={20}
+                  />
+                </span>
               )}
               <span>{gambarFile ? gambarFile.name : "Upload Gambar"}</span>
               <input
@@ -218,7 +225,7 @@ export default function BahanFormModal({
           <button
             onClick={handleSubmit}
             disabled={isUploading || isSaving}
-            className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-4 mt-2 disabled:opacity-50"
+            className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-4 mt-2 disabled:opacity-50"
           >
             {isUploading ? "Mengupload gambar..." : isSaving ? "Menyimpan..." : "Simpan"}
           </button>
@@ -231,7 +238,7 @@ export default function BahanFormModal({
           onClick={() => setIsSatuanPickerOpen(false)}
         >
           <div
-            className="bg-white rounded-2xl p-6 w-full max-w-md"
+            className="bg-[#fdf8f0] rounded-2xl p-6 w-full max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="font-semibold mb-4">Pilih Satuan</h3>
@@ -240,7 +247,7 @@ export default function BahanFormModal({
                 <button
                   key={s}
                   onClick={() => handlePickSatuan(s)}
-                  className="border border-black/30 rounded-full px-4 py-2 text-sm hover:bg-[#2d5a4a] hover:text-white hover:border-[#2d5a4a] transition-colors"
+                  className="border border-black/30 rounded-full px-4 py-2 text-sm hover:bg-[#2d5a4a] hover:text-[#fdf8f0] hover:border-[#2d5a4a] transition-colors"
                 >
                   {s}
                 </button>

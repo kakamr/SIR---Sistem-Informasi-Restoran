@@ -16,7 +16,7 @@ export default function CategoryTabs({ active, onChange }: CategoryTabsProps) {
           onClick={() => onChange(kategori)}
           className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
             active === kategori
-              ? "bg-[#2d5a4a] text-white border-[#2d5a4a]"
+              ? "bg-[#2d5a4a] text-[#fdf8f0] border-[#2d5a4a]"
               : "bg-[#fdf8f0] text-black/70 border-black/10"
           }`}
         >

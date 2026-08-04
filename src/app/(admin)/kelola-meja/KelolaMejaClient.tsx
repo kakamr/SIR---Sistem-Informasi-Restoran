@@ -60,7 +60,7 @@ export default function KelolaMejaClient({ initialMeja }: { initialMeja: Meja[] 
         </button>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-[#2d5a4a] text-white font-semibold px-6 py-3 rounded-lg"
+          className="bg-[#2d5a4a] text-[#fdf8f0] font-semibold px-6 py-3 rounded-lg"
         >
           Tambah Meja
         </button>
@@ -85,7 +85,7 @@ export default function KelolaMejaClient({ initialMeja }: { initialMeja: Meja[] 
               </div>
 
               <div className="flex justify-center mb-5">
-                <div className="w-28 h-28 rounded-full bg-[#2d5a4a] text-white flex items-center justify-center text-5xl font-bold">
+                <div className="w-28 h-28 rounded-full bg-[#2d5a4a] text-[#fdf8f0] flex items-center justify-center text-5xl font-bold">
                   {meja.nomorMeja.replace(/\D/g, "")}
                 </div>
               </div>
@@ -114,7 +114,7 @@ export default function KelolaMejaClient({ initialMeja }: { initialMeja: Meja[] 
                   <button
                     onClick={() => handleGenerateQr(meja.idMeja)}
                     disabled={isPending && generatingId === meja.idMeja}
-                    className="w-full py-3 rounded-lg bg-[#2d5a4a] text-white font-semibold disabled:opacity-50"
+                    className="w-full py-3 rounded-lg bg-[#2d5a4a] text-[#fdf8f0] font-semibold disabled:opacity-50"
                   >
                     {isPending && generatingId === meja.idMeja
                       ? "Memproses..."

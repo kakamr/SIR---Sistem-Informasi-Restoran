@@ -67,7 +67,7 @@ export default function CartPanel({
             onClick={() => onSelectMetodeBayar("tunai")}
             className={`rounded-lg p-4 flex items-center gap-4 transition-colors ${
               metodeBayar === "tunai"
-                ? "bg-[#2d5a4a] text-white"
+                ? "bg-[#2d5a4a] text-[#fdf8f0]"
                 : "bg-gray-300 text-black/60"
             }`}
           >
@@ -84,7 +84,7 @@ export default function CartPanel({
             onClick={() => onSelectMetodeBayar("qris")}
             className={`rounded-lg p-4 flex items-center gap-4 transition-colors ${
               metodeBayar === "qris"
-                ? "bg-[#2d5a4a] text-white"
+                ? "bg-[#2d5a4a] text-[#fdf8f0]"
                 : "bg-gray-300 text-black/60"
             }`}
           >
@@ -101,7 +101,7 @@ export default function CartPanel({
             onClick={() => onSelectMetodeBayar("edc")}
             className={`rounded-lg p-4 flex items-center gap-4 transition-colors ${
               metodeBayar === "edc"
-                ? "bg-[#2d5a4a] text-white"
+                ? "bg-[#2d5a4a] text-[#fdf8f0]"
                 : "bg-gray-300 text-black/60"
             }`}
           >
@@ -132,7 +132,7 @@ export default function CartPanel({
 
         <button
           onClick={onConfirmPembayaran}
-          className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-4 mt-4"
+          className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-4 mt-4"
         >
           {isEdit ? "Simpan Perubahan" : "Konfirmasi Pembayaran"}
         </button>
@@ -146,7 +146,7 @@ export default function CartPanel({
         <h2 className="text-2xl font-bold">{isEdit ? "Edit Pesanan" : "Pesanan"}</h2>
         <button
           onClick={onClearCart}
-          className="bg-[#2d5a4a] text-white text-sm px-4 py-1.5 rounded-full"
+          className="bg-[#2d5a4a] text-[#fdf8f0] text-sm px-4 py-1.5 rounded-full"
         >
           Clear
         </button>
@@ -158,7 +158,7 @@ export default function CartPanel({
           onClick={() => onChangeJenisLayanan("dine_in")}
           className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${
             jenisLayanan === "dine_in"
-              ? "bg-[#2d5a4a] text-white"
+              ? "bg-[#2d5a4a] text-[#fdf8f0]"
               : "bg-gray-300 text-black/60"
           }`}
         >
@@ -168,7 +168,7 @@ export default function CartPanel({
           onClick={() => onChangeJenisLayanan("take_away")}
           className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${
             jenisLayanan === "take_away"
-              ? "bg-[#2d5a4a] text-white"
+              ? "bg-[#2d5a4a] text-[#fdf8f0]"
               : "bg-gray-300 text-black/60"
           }`}
         >
@@ -180,10 +180,10 @@ export default function CartPanel({
       {jenisLayanan === "dine_in" && (
         <button
           onClick={onOpenTableModal}
-          className="w-full bg-[#2d5a4a] text-white rounded-lg py-3 px-4 flex items-center justify-between mb-6"
+          className="w-full bg-[#2d5a4a] text-[#fdf8f0] rounded-lg py-3 px-4 flex items-center justify-between mb-6"
         >
           <span className="font-semibold">Nomor Meja</span>
-          <span className="bg-black text-white text-sm font-bold px-3 py-1 rounded">
+          <span className="bg-black text-[#fdf8f0] text-sm font-bold px-3 py-1 rounded">
             {selectedMeja
               ? selectedMeja.nomorMeja.replace(/\D/g, "").padStart(2, "0")
               : "-"}
@@ -238,7 +238,7 @@ export default function CartPanel({
       <button
         onClick={onConfirmPesanan}
         disabled={cartItems.length === 0}
-        className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-4 mt-4 disabled:opacity-50"
+        className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-4 mt-4 disabled:opacity-50"
       >
         Konfirmasi Pesanan
       </button>

@@ -103,7 +103,7 @@ export default function DataDiriClient({ nomorMeja, kodeAkses }: DataDiriClientP
       <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-4 bg-[#e2e2e2] flex flex-col gap-2">
         <button
           onClick={handleLanjut}
-          className="w-full bg-[#2d5a4a] text-white font-semibold rounded-full py-4"
+          className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-full py-4"
         >
           Lanjutkan
         </button>

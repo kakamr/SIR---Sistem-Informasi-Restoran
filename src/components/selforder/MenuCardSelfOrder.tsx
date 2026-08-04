@@ -43,7 +43,7 @@ export default function MenuCardSelfOrder({ menu }: { menu: Menu }) {
             {qty === 0 ? (
               <button
                 onClick={handleTambahPertama}
-                className="bg-[#2d5a4a] text-white text-sm font-semibold px-5 py-2 rounded-full"
+                className="bg-[#2d5a4a] text-[#fdf8f0] text-sm font-semibold px-5 py-2 rounded-full"
               >
                 Tambah
               </button>
@@ -58,14 +58,14 @@ export default function MenuCardSelfOrder({ menu }: { menu: Menu }) {
                 </button>
                 <button
                   onClick={() => updateQty(menu.idMenu, qty - 1)}
-                  className="w-8 h-8 bg-[#2d5a4a] text-white rounded-full flex items-center justify-center"
+                  className="w-8 h-8 bg-[#2d5a4a] text-[#fdf8f0] rounded-full flex items-center justify-center"
                 >
                   −
                 </button>
                 <span className="w-5 text-center font-semibold">{qty}</span>
                 <button
                   onClick={() => updateQty(menu.idMenu, qty + 1)}
-                  className="w-8 h-8 bg-[#2d5a4a] text-white rounded-full flex items-center justify-center"
+                  className="w-8 h-8 bg-[#2d5a4a] text-[#fdf8f0] rounded-full flex items-center justify-center"
                 >
                   +
                 </button>

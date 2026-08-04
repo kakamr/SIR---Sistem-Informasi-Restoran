@@ -18,13 +18,13 @@ export default function InstruksiModal({
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={onClose}>
       <div
-        className="bg-white rounded-2xl p-8 w-full max-w-md"
+        className="bg-[#fdf8f0] rounded-2xl p-8 w-full max-w-md"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-2xl font-bold mb-1">Resep / Instruksi</h2>
         <p className="text-black/50 text-sm mb-6">{namaMenu}</p>
 
-        <div className="bg-[#fdf8f0] rounded-lg p-4 min-h-[120px] whitespace-pre-wrap text-sm leading-relaxed">
+        <div className="bg-[#fdf8f0] rounded-lg p-4 min-h-[120px] border border-[#e2e2e2] whitespace-pre-wrap text-sm leading-relaxed">
           {instruksiMasak && instruksiMasak.trim().length > 0
             ? instruksiMasak
             : "Belum ada instruksi untuk menu ini."}
@@ -32,7 +32,7 @@ export default function InstruksiModal({
 
         <button
           onClick={onClose}
-          className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-3 mt-6"
+          className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-3 mt-6"
         >
           Tutup
         </button>

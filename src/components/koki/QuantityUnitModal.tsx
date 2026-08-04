@@ -44,7 +44,7 @@ export default function QuantityUnitModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl p-8 w-full max-w-sm"
+        className="bg-[#fdf8f0] rounded-2xl p-8 w-full max-w-sm"
         onClick={(e) => e.stopPropagation()}
       >
         {error && (
@@ -83,7 +83,7 @@ export default function QuantityUnitModal({
 
         <button
           onClick={handleSubmit}
-          className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-3"
+          className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-3"
         >
           Simpan
         </button>

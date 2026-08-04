@@ -87,7 +87,7 @@ export default function MenungguPembayaranClient({
 
       <div className="px-5 -mt-6">
 
-        <div className="bg-[#2d5a4a] text-white rounded-xl p-4 flex items-center gap-3 mb-4">
+        <div className="bg-[#2d5a4a] text-[#fdf8f0] rounded-xl p-4 flex items-center gap-3 mb-4">
           <Image
             src="/icons/status/Time.png"
             alt="Menunggu"
@@ -129,7 +129,7 @@ export default function MenungguPembayaranClient({
           </div>
 
           {isVA(currentData.metode_pembayaran) ? (
-            <div className="bg-white rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-[#fdf8f0] rounded-xl p-4 flex items-center justify-between">
 
               <div>
 
@@ -162,7 +162,7 @@ export default function MenungguPembayaranClient({
 
             </div>
           ) : (
-            <div className="bg-white rounded-xl p-4">
+            <div className="bg-[#fdf8f0] rounded-xl p-4">
 
               <p className="text-xs text-black/50 mb-2">
                 QR QRIS

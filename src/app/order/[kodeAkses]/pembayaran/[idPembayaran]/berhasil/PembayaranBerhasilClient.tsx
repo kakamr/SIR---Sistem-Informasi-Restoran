@@ -96,7 +96,7 @@ export default function PembayaranBerhasilClient({
           </div>
         )}
 
-        <div className="bg-[#2d5a4a] text-white rounded-xl p-4 flex items-center gap-3 mb-4">
+        <div className="bg-[#2d5a4a] text-[#fdf8f0] rounded-xl p-4 flex items-center gap-3 mb-4">
 
           <Image
             src="/icons/status/Info.png"
@@ -181,7 +181,7 @@ export default function PembayaranBerhasilClient({
           <button
             onClick={handleSimpanStruk}
             disabled={isGenerating}
-            className="w-full bg-[#2d5a4a] text-white font-semibold rounded-full py-4 disabled:opacity-50"
+            className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-full py-4 disabled:opacity-50"
           >
             {isGenerating
               ? "Membuat struk..."
@@ -194,7 +194,7 @@ export default function PembayaranBerhasilClient({
                 `/order/${data.kode_akses}`
               )
             }
-            className="w-full bg-[#2d5a4a] text-white font-semibold rounded-full py-4"
+            className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-full py-4"
           >
             Kembali Ke Beranda
           </button>

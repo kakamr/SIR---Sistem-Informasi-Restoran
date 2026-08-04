@@ -44,7 +44,7 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
 
   return (
     <span
-      className={`${color} text-white text-xs font-semibold px-3 py-1.5 rounded-full shrink-0`}
+      className={`${color} text-[#fdf8f0] text-xs font-semibold px-3 py-1.5 rounded-full shrink-0`}
     >
       {label}
     </span>

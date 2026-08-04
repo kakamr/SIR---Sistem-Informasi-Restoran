@@ -70,13 +70,13 @@ export default function LaporanClient({ initialSummary }: { initialSummary: Lapo
           <h3 className="font-bold text-lg mb-4">Pesanan Terbaru</h3>
           <div className="flex flex-col gap-3 max-h-[100px] overflow-y-auto pr-2">
             {summary.pesananTerbaru.map((p) => (
-              <div key={p.idPesanan} className="bg-[#2d5a4a] text-white rounded-lg p-4 flex items-center gap-3">
-                <span className="px-3 py-2 bg-white/20 rounded-lg shrink-0 text-xs font-semibold text-center leading-tight">
+              <div key={p.idPesanan} className="bg-[#2d5a4a] text-[#fdf8f0] rounded-lg p-4 flex items-center gap-3">
+                <span className="px-3 py-2 bg-[#fdf8f0]/20 rounded-lg shrink-0 text-xs font-semibold text-center leading-tight">
                   {p.jenisLayanan === "dine_in" ? "Dine In" : "Take Away"}
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold truncate">Pesanan #{p.idPesanan}</p>
-                  <p className="text-xs text-white/70">{formatTanggal(p.waktuPesan)}</p>
+                  <p className="text-xs text-[#fdf8f0]/70">{formatTanggal(p.waktuPesan)}</p>
                   <p className="font-bold mt-1">{formatRupiah(p.totalTagihan)}</p>
                 </div>
                 <StatusBadge status={p.statusPesanan} />
@@ -94,7 +94,7 @@ export default function LaporanClient({ initialSummary }: { initialSummary: Lapo
 
 function TransaksiStat({ value, label }: { value: number; label: string }) {
   return (
-    <div className="bg-[#2d5a4a] text-white rounded-lg p-4 flex flex-col items-center">
+    <div className="bg-[#2d5a4a] text-[#fdf8f0] rounded-lg p-4 flex flex-col items-center">
       <span className="text-3xl font-bold">{value}</span>
       <span className="text-xs text-center mt-1">{label}</span>
     </div>

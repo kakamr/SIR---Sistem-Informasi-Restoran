@@ -35,7 +35,7 @@ export default function MejaCard({
 
       {}
       <div className="flex justify-center mb-5">
-        <div className="w-28 h-28 rounded-full bg-[#2d5a4a] text-white flex items-center justify-center text-5xl font-bold">
+        <div className="w-28 h-28 rounded-full bg-[#2d5a4a] text-[#fdf8f0] flex items-center justify-center text-5xl font-bold">
           {meja.nomorMeja.replace(/\D/g, "")}
         </div>
       </div>
@@ -81,7 +81,7 @@ export default function MejaCard({
           onClick={onKosongkan}
           className={`w-full py-3 rounded-lg font-semibold transition-colors ${
             isTerisi
-              ? "bg-[#2d5a4a] text-white hover:bg-[#25493d]"
+              ? "bg-[#2d5a4a] text-[#fdf8f0] hover:bg-[#25493d]"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
           }`}
         >

@@ -36,7 +36,7 @@ export default function CatatanModal({ isOpen, onClose, initialValue, onSave }: 
           onChange={(e) => setCatatan(e.target.value)}
           placeholder="Masukan Catatan"
           rows={8}
-          className="w-full bg-white border border-black/10 rounded-xl px-4 py-3 outline-none resize-none mb-4"
+          className="w-full bg-[#fdf8f0] border border-black/10 rounded-xl px-4 py-3 outline-none resize-none mb-4"
         />
 
         <button
@@ -44,7 +44,7 @@ export default function CatatanModal({ isOpen, onClose, initialValue, onSave }: 
             onSave(catatan);
             onClose();
           }}
-          className="w-full bg-[#2d5a4a] text-white font-semibold rounded-full py-4"
+          className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-full py-4"
         >
           Simpan Catatan
         </button>

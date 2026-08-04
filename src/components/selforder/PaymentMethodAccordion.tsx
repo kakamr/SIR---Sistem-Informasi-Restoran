@@ -69,17 +69,17 @@ export default function PaymentMethodAccordion({
                     />
                     <span
                       className={`flex-1 text-left font-medium ${
-                        selected === opt.id ? "text-white" : "text-black"
+                        selected === opt.id ? "text-[#fdf8f0]" : "text-black"
                       }`}
                     >
                       {opt.label}
                     </span>
                     <span
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                        selected === opt.id ? "border-white" : "border-black/30"
+                        selected === opt.id ? "border-[#fdf8f0]" : "border-black/30"
                       }`}
                     >
-                      {selected === opt.id && <span className="w-2.5 h-2.5 bg-white rounded-full" />}
+                      {selected === opt.id && <span className="w-2.5 h-2.5 bg-[#fdf8f0] rounded-full" />}
                     </span>
                   </button>
                 ))}

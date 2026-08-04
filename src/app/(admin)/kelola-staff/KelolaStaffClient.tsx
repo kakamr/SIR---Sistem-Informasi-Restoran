@@ -64,7 +64,7 @@ export default function KelolaStaffClient({ initialStaff }: { initialStaff: Kary
       <div className="flex justify-end mb-6">
         <button
           onClick={handleOpenCreate}
-          className="bg-[#2d5a4a] text-white font-semibold px-6 py-3 rounded-lg"
+          className="bg-[#2d5a4a] text-[#fdf8f0] font-semibold px-6 py-3 rounded-lg"
         >
           Tambah Akun Staff
         </button>
@@ -72,7 +72,7 @@ export default function KelolaStaffClient({ initialStaff }: { initialStaff: Kary
 
       <div className="bg-[#fdf8f0] rounded-xl overflow-hidden">
         <table className="w-full text-left">
-          <thead className="bg-[#2d5a4a] text-white">
+          <thead className="bg-[#2d5a4a] text-[#fdf8f0]">
             <tr>
               <th className="px-5 py-3 text-sm font-semibold">Nama</th>
               <th className="px-5 py-3 text-sm font-semibold">Role</th>

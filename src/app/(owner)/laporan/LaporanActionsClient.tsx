@@ -60,7 +60,7 @@ export default function LaporanActionsClient() {
         <Image src="/icons/laporan/pdf.png" alt="laporan" width={70} height={70} />
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-[#2d5a4a] text-white font-semibold px-6 py-3 rounded-lg text-sm"
+          className="bg-[#2d5a4a] text-[#fdf8f0] font-semibold px-6 py-3 rounded-lg text-sm"
         >
           Atur Periode
         </button>

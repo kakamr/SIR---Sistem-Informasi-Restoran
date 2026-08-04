@@ -66,7 +66,7 @@ export default function StokClient({ initialBahanList }: { initialBahanList: Bah
       <div className="flex justify-end mb-6">
         <button
           onClick={handleOpenCreate}
-          className="bg-[#2d5a4a] text-white font-semibold px-6 py-3 rounded-lg"
+          className="bg-[#2d5a4a] text-[#fdf8f0] font-semibold px-6 py-3 rounded-lg"
         >
           Tambah Bahan
         </button>

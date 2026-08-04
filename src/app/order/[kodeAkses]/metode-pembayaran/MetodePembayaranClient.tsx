@@ -83,7 +83,7 @@ export default function MetodePembayaranClient({
         <button
           onClick={handlePesan}
           disabled={!selected || isSubmitting}
-          className="w-full bg-[#2d5a4a] text-white font-semibold rounded-full py-4 disabled:opacity-50"
+          className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-full py-4 disabled:opacity-50"
         >
           {isSubmitting ? "Memproses..." : "Pesan"}
         </button>

@@ -37,7 +37,7 @@ export default function PesananBerhasilModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[110] p-6">
-      <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden">
+      <div className="bg-[#fdf8f0] rounded-2xl w-full max-w-sm overflow-hidden">
         <div className="bg-[#fdf8f0] px-6 pt-8 pb-6 text-center">
           <div className="w-16 h-16 border-2 border-[#2d5a4a] rounded-full flex items-center justify-center mx-auto mb-3 text-2xl text-[#2d5a4a]">
             ✓
@@ -47,7 +47,7 @@ export default function PesananBerhasilModal({
         </div>
 
         {nomorAntrian && (
-          <div className="bg-[#2d5a4a] text-white text-center py-5">
+          <div className="bg-[#2d5a4a] text-[#fdf8f0] text-center py-5">
             <p className="text-sm opacity-80">Nomor Antrian</p>
             <p className="text-5xl font-bold tracking-wide mt-1">{nomorAntrian}</p>
             <p className="text-xs opacity-80 mt-2">Sampaikan nomor ini ke pelanggan</p>
@@ -90,7 +90,7 @@ export default function PesananBerhasilModal({
           {idPesanan && <TombolCetakStruk idPesanan={idPesanan} />}
           <button
             onClick={onClose}
-            className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-3"
+            className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-3"
           >
             Pesanan Baru
           </button>

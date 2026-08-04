@@ -27,7 +27,7 @@ export default function MejaFormModal({ isOpen, onClose, onSubmit }: MejaFormMod
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white rounded-2xl p-8 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-[#fdf8f0] rounded-2xl p-8 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
         <h2 className="text-2xl font-bold mb-6">Tambah Meja</h2>
 
         <label className="block text-sm font-semibold mb-2">Nomor Meja</label>
@@ -49,7 +49,7 @@ export default function MejaFormModal({ isOpen, onClose, onSubmit }: MejaFormMod
 
         <button
           onClick={handleSubmit}
-          className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-3"
+          className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-3"
         >
           Simpan
         </button>

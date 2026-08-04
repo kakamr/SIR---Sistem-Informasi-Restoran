@@ -80,7 +80,7 @@ export default function OrderCard({
           {actionLabel && (
             <button
               onClick={onAction}
-              className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-3"
+              className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-3"
             >
               {actionLabel}
             </button>

@@ -47,13 +47,13 @@ export default function MenuManageCard({
         <div className="flex gap-2">
           <button
             onClick={onEdit}
-            className="flex-1 bg-[#2d5a4a] text-white font-semibold rounded-lg py-2.5 text-sm"
+            className="flex-1 bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-2.5 text-sm"
           >
             Edit
           </button>
           <button
             onClick={onResep}
-            className="flex-1 bg-[#2d5a4a] text-white font-semibold rounded-lg py-2.5 text-sm"
+            className="flex-1 bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-2.5 text-sm"
           >
             Resep
           </button>

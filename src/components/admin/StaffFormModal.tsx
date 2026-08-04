@@ -68,7 +68,7 @@ export default function StaffFormModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white rounded-2xl p-8 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-[#fdf8f0] rounded-2xl p-8 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
         <h2 className="text-2xl font-bold mb-6">
           {mode === "create" ? "Tambah Akun Staff" : "Edit Akun Staff"}
         </h2>
@@ -131,7 +131,7 @@ export default function StaffFormModal({
 
         <button
           onClick={handleSubmit}
-          className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-3"
+          className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-3"
         >
           Simpan
         </button>

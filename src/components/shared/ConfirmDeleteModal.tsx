@@ -45,7 +45,7 @@ export default function ConfirmDeleteModal({
           </button>
           <button
             onClick={onConfirm}
-            className={`flex-1 py-3 rounded-lg text-white font-semibold transition ${confirmButtonClass}`}
+            className={`flex-1 py-3 rounded-lg text-[#fdf8f0] font-semibold transition ${confirmButtonClass}`}
           >
             {confirmLabel}
           </button>

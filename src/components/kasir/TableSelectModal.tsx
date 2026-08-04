@@ -25,7 +25,7 @@ export default function TableSelectModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl p-8 w-full max-w-lg"
+        className="bg-[#fdf8f0] rounded-2xl p-8 w-full max-w-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-2xl font-bold mb-6">Pilih Meja</h2>
@@ -44,7 +44,7 @@ export default function TableSelectModal({
                 }}
                 className={`aspect-square rounded-lg flex items-center justify-center text-2xl font-bold transition-colors relative ${
                   isSelected
-                    ? "bg-[#2d5a4a] text-white"
+                    ? "bg-[#2d5a4a] text-[#fdf8f0]"
                     : isTerisi
                     ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 border-2 border-yellow-400"
                     : "bg-gray-200 text-black hover:bg-gray-300"
@@ -52,7 +52,7 @@ export default function TableSelectModal({
               >
                 {m.nomorMeja.replace(/\D/g, "")}
                 {isTerisi && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-yellow-500 rounded-full border-2 border-white" />
+                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-yellow-500 rounded-full border-2 border-[#fdf8f0]" />
                 )}
               </button>
             );

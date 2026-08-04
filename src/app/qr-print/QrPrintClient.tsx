@@ -28,7 +28,7 @@ export default function QrPrintClient({
   }, []);
 
   return (
-    <div className="p-8 bg-white">
+    <div className="p-8 bg-[#fdf8f0]">
       <div className="grid grid-cols-2 gap-6">
         {qrList
           .filter((q) => q.qrDataUrl)

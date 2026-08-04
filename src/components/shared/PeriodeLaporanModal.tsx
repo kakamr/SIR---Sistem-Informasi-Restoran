@@ -106,7 +106,7 @@ export default function PeriodeLaporanModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl p-8 w-full max-w-md"
+        className="bg-[#fdf8f0] rounded-2xl p-8 w-full max-w-md"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-2xl font-bold mb-6">Atur Periode Laporan</h2>
@@ -125,7 +125,7 @@ export default function PeriodeLaporanModal({
               onClick={() => setJenisPeriode(j)}
               className={`py-2.5 rounded-lg text-sm font-semibold capitalize transition-colors ${
                 jenisPeriode === j
-                  ? "bg-[#2d5a4a] text-white"
+                  ? "bg-[#2d5a4a] text-[#fdf8f0]"
                   : "bg-gray-100 text-black/60 hover:bg-gray-200"
               }`}
             >
@@ -201,14 +201,14 @@ export default function PeriodeLaporanModal({
           <button
             onClick={() => handleGenerate("pdf")}
             disabled={isGenerating !== null}
-            className="flex-1 bg-[#2d5a4a] text-white font-semibold rounded-lg py-3 disabled:opacity-50"
+            className="flex-1 bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-3 disabled:opacity-50"
           >
             {isGenerating === "pdf" ? "Memproses..." : "Download PDF"}
           </button>
           <button
             onClick={() => handleGenerate("excel")}
             disabled={isGenerating !== null}
-            className="flex-1 bg-[#2d5a4a] text-white font-semibold rounded-lg py-3 disabled:opacity-50"
+            className="flex-1 bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-3 disabled:opacity-50"
           >
             {isGenerating === "excel" ? "Memproses..." : "Download Excel"}
           </button>

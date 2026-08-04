@@ -47,18 +47,18 @@ export default function Sidebar({
     >
       <div>
         {}
-        <div className="relative h-24 border-b border-white/10 px-6 flex flex-col justify-center">
+        <div className="relative h-24 border-b border-[#fdf8f0]/10 px-6 flex flex-col justify-center">
           <button
             onClick={onToggle}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white shadow-lg z-50"
+            className="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#fdf8f0] shadow-lg z-50"
           >
             {isOpen ? "◀" : "▶"}
           </button>
 
-          <h1 className="text-white text-3xl font-bold text-center">SIR</h1>
+          <h1 className="text-[#fdf8f0] text-3xl font-bold text-center">SIR</h1>
 
           {isOpen && (
-            <p className="text-white/70 text-sm text-center mt-2">
+            <p className="text-[#fdf8f0]/70 text-sm text-center mt-2">
               Sistem Informasi Restoran
             </p>
           )}
@@ -86,13 +86,13 @@ export default function Sidebar({
                   transition
                   ${
                     active
-                      ? "bg-white/15 text-white font-semibold"
-                      : "text-white/80 hover:bg-white/10"
+                      ? "bg-[#fdf8f0]/15 text-[#fdf8f0] font-semibold"
+                      : "text-[#fdf8f0]/80 hover:bg-[#fdf8f0]/10"
                   }
                 `}
               >
                 {item.icon ?? (
-                  <div className="w-8 h-8 rounded bg-white/20 shrink-0" />
+                  <div className="w-8 h-8 rounded bg-[#fdf8f0]/20 shrink-0" />
                 )}
 
                 {isOpen && (
@@ -107,7 +107,7 @@ export default function Sidebar({
       </div>
 
       {}
-      <div className="p-4 border-t border-white/10">
+      <div className="p-4 border-t border-[#fdf8f0]/10">
         <button
           onClick={() => onLogout?.()}
           className={`
@@ -121,8 +121,8 @@ export default function Sidebar({
             }
             py-3
             rounded-lg
-            text-white/80
-            hover:bg-white/10
+            text-[#fdf8f0]/80
+            hover:bg-[#fdf8f0]/10
             transition
           `}
         >

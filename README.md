@@ -216,7 +216,8 @@ Skema lengkap beserta data contoh ada di berkas SQL pada repositori.
 | Kasir | `rifky.kasir` |
 | Koki | `kaka.koki` |
 | Pelayan | `urbania.pelayan` |
-| Admin | `admin.resto` |
+| Pemilik | `owner.resto` |
+| Admin | `admin` |
 
 > Kata sandi tiap akun disepakati internal tim dan tidak dicantumkan di sini demi keamanan. Kata sandi disimpan dalam bentuk hash bcrypt, bukan teks biasa.
 

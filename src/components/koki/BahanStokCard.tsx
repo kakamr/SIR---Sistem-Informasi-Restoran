@@ -36,7 +36,7 @@ export default function BahanStokCard({ bahan, onEdit, onDelete }: BahanStokCard
       <div className="flex gap-2 mt-auto">
         <button
           onClick={onEdit}
-          className="flex-1 bg-[#2d5a4a] text-white font-semibold rounded-lg py-2.5"
+          className="flex-1 bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-2.5"
         >
           Edit
         </button>

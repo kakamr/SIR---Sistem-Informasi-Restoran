@@ -75,14 +75,14 @@ export default function PesananClient({ nomorMeja, kodeAkses }: PesananClientPro
                       </button>
                       <button
                         onClick={() => updateQty(item.idMenu, item.jumlah - 1)}
-                        className="w-7 h-7 bg-[#2d5a4a] text-white rounded-full text-sm"
+                        className="w-7 h-7 bg-[#2d5a4a] text-[#fdf8f0] rounded-full text-sm"
                       >
                         −
                       </button>
                       <span className="w-4 text-center text-sm font-semibold">{item.jumlah}</span>
                       <button
                         onClick={() => updateQty(item.idMenu, item.jumlah + 1)}
-                        className="w-7 h-7 bg-[#2d5a4a] text-white rounded-full text-sm"
+                        className="w-7 h-7 bg-[#2d5a4a] text-[#fdf8f0] rounded-full text-sm"
                       >
                         +
                       </button>
@@ -126,7 +126,7 @@ export default function PesananClient({ nomorMeja, kodeAkses }: PesananClientPro
         <button
           onClick={() => router.push(`/order/${kodeAkses}/data-diri`)}
           disabled={cartItems.length === 0}
-          className="w-full bg-[#2d5a4a] text-white font-semibold rounded-full py-4 disabled:opacity-50"
+          className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-full py-4 disabled:opacity-50"
         >
           Bayar
         </button>

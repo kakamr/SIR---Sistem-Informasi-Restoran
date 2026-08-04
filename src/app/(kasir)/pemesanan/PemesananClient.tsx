@@ -285,7 +285,7 @@ export default function PemesananClient({
 
       {isSubmitting && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
-          <div className="bg-white rounded-xl px-8 py-6 font-semibold">Memproses pesanan...</div>
+          <div className="bg-[#fdf8f0] rounded-xl px-8 py-6 font-semibold">Memproses pesanan...</div>
         </div>
       )}
     </>

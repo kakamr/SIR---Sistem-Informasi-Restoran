@@ -133,7 +133,7 @@ function AntrianColumn({ title, count, children }: { title: string; count: numbe
     <div className="bg-[#fdf8f0] rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-bold text-lg">{title}</h3>
-        <span className="bg-[#2d5a4a] text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+        <span className="bg-[#2d5a4a] text-[#fdf8f0] text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
           {count}
         </span>
       </div>

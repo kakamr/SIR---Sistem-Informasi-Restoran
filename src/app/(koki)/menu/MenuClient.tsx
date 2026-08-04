@@ -86,7 +86,7 @@ export default function MenuClient({
       <div className="flex justify-end mb-6">
         <button
           onClick={handleOpenCreate}
-          className="bg-[#2d5a4a] text-white font-semibold px-6 py-3 rounded-lg"
+          className="bg-[#2d5a4a] text-[#fdf8f0] font-semibold px-6 py-3 rounded-lg"
         >
           Tambah Menu
         </button>
@@ -136,7 +136,7 @@ export default function MenuClient({
 
       {isSaving && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
-          <div className="bg-white rounded-xl px-8 py-6 font-semibold">Menyimpan...</div>
+          <div className="bg-[#fdf8f0] rounded-xl px-8 py-6 font-semibold">Menyimpan...</div>
         </div>
       )}
     </main>

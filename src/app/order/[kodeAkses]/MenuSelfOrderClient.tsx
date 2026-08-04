@@ -77,11 +77,11 @@ export default function MenuSelfOrderClient({
         <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-4">
           <button
             onClick={() => router.push(`/order/${kodeAkses}/pesanan`)}
-            className="w-full bg-[#2d5a4a] text-white rounded-2xl p-4 flex items-center justify-between"
+            className="w-full bg-[#2d5a4a] text-[#fdf8f0] rounded-2xl p-4 flex items-center justify-between"
           >
             <div className="text-left">
-              <p className="text-sm text-white/80">{totalItem} Item</p>
-              <p className="text-xs text-white/60">Total Harga</p>
+              <p className="text-sm text-[#fdf8f0]/80">{totalItem} Item</p>
+              <p className="text-xs text-[#fdf8f0]/60">Total Harga</p>
             </div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-lg">{formatRupiah(totalHarga)}</span>

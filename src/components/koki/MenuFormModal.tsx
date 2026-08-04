@@ -134,7 +134,7 @@ export default function MenuFormModal({
           className="min-h-full flex items-start justify-center py-8"
         >
           <div
-            className="bg-white rounded-2xl p-8 w-full max-w-lg my-8"
+            className="bg-[#fdf8f0] rounded-2xl p-8 w-full max-w-lg my-8"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-2xl font-bold mb-6">
@@ -230,7 +230,14 @@ export default function MenuFormModal({
                       className="object-cover rounded"
                     />
                   ) : (
-                    <span className="w-10 h-10 bg-gray-200 rounded" />
+                    <span className="w-10 h-10 flex items-center justify-center rounded">
+                      <Image
+                        src="/icons/button/upload.png"
+                        alt="Upload"
+                        width={20}
+                        height={20}
+                      />
+                    </span>
                   )}
                   <span>{gambarFile ? gambarFile.name : "Upload Gambar"}</span>
                   <input
@@ -246,7 +253,7 @@ export default function MenuFormModal({
               <button
                 onClick={handleSubmit}
                 disabled={isUploading}
-                className="w-full bg-[#2d5a4a] text-white font-semibold rounded-lg py-4 mt-2 disabled:opacity-50"
+                className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-4 mt-2 disabled:opacity-50"
               >
                 {isUploading ? "Mengupload gambar..." : "Simpan"}
               </button>

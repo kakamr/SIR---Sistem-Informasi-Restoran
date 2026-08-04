@@ -53,7 +53,7 @@ export default function EmptyTableModal({
 
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 rounded-lg bg-[#2d5a4a] text-white font-semibold hover:bg-[#25493d] transition"
+            className="flex-1 py-3 rounded-lg bg-[#2d5a4a] text-[#fdf8f0] font-semibold hover:bg-[#25493d] transition"
           >
             Kosongkan
           </button>
