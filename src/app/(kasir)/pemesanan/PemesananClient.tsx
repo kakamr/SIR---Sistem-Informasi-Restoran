@@ -91,7 +91,17 @@ export default function PemesananClient({
       return prev.map((item) => (item.idMenu === idMenu ? { ...item, jumlah } : item));
     });
   }
-
+  
+  function handleUpdateCatatan(idMenu: number, catatan: string) {
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item.idMenu === idMenu
+            ? { ...item, catatanItem: catatan.length > 0 ? catatan : undefined }
+            : item
+        )
+      );
+    }
+  
   function handleClearCart() {
     setCartItems([]);
     setSelectedMejaId(null);
@@ -227,12 +237,13 @@ export default function PemesananClient({
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
             {menuListActive.map((menu) => (
               <MenuCard
-                key={menu.idMenu}
-                menu={menu}
-                cartItems={cartItems}
-                onAddToCart={handleAddToCart}
-                onUpdateQty={handleUpdateQty}
-              />
+                  key={menu.idMenu}
+                  menu={menu}
+                  cartItems={cartItems}
+                  onAddToCart={handleAddToCart}
+                  onUpdateQty={handleUpdateQty}
+                  onUpdateCatatan={handleUpdateCatatan}
+                />
             ))}
           </div>
           {menuListActive.length === 0 && (

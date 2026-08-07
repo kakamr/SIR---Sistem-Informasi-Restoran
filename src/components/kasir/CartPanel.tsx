@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { formatRupiah } from "@/lib/utils/formatCurrency";
 import type { CartItem, JenisLayanan, Meja } from "@/lib/types";
 import Image from "next/image";
@@ -50,9 +51,37 @@ export default function CartPanel({
   const diskon = 0; 
   const total = subtotal + pajak - diskon;
 
+  const totalDibayarLama = totalDibayar ?? 0;
+  // Jumlah yang sebenarnya masih perlu dibayar saat ini:
+  // - pesanan baru: sama dengan total
+  // - edit pesanan: selisih antara total baru dengan yang sudah dibayar sebelumnya
+  const sisaTagihan = isEdit ? total - totalDibayarLama : total;
+
+  const [uangDiterima, setUangDiterima] = useState("");
+  const [localError, setLocalError] = useState("");
+
+  useEffect(() => {
+    if (metodeBayar !== "tunai") {
+      setUangDiterima("");
+      setLocalError("");
+    }
+  }, [metodeBayar]);
+
+  const uangDiterimaNum = Number(uangDiterima.replace(/\D/g, "")) || 0;
+  const kembalian = uangDiterimaNum - sisaTagihan;
+
+  function handleKlikKonfirmasi() {
+    if (metodeBayar === "tunai" && uangDiterimaNum < sisaTagihan) {
+      setLocalError("Uang diterima kurang dari sisa tagihan");
+      return;
+    }
+    setLocalError("");
+    onConfirmPembayaran();
+  }
+
   if (step === "pembayaran") {
     return (
-      <div className="w-[420px] bg-[#fdf8f0] p-8 flex flex-col shrink-0">
+      <div className="w-[420px] h-full bg-[#fdf8f0] p-8 flex flex-col shrink-0 overflow-y-auto">
         <button
           onClick={onBackToPesanan}
           className="text-2xl mb-4 w-fit"
@@ -120,18 +149,69 @@ export default function CartPanel({
 
         <RingkasanTotal subtotal={subtotal} diskon={diskon} pajak={pajak} total={total} />
 
-        {isEdit && totalDibayar !== undefined && (
+        {metodeBayar === "tunai" && (
+          <div className="mt-4 rounded-lg bg-[#fdf8f0] border border-black/10 p-4 flex flex-col gap-3">
+            {isEdit && (
+              <div className="flex flex-col gap-1.5 text-sm text-black/60 border-b border-black/10 pb-3">
+                <div className="flex justify-between">
+                  <span>Sudah Dibayar</span>
+                  <span className="font-semibold text-black">
+                    {formatRupiah(totalDibayarLama)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Setelah Diubah</span>
+                  <span className="font-semibold text-black">
+                    {formatRupiah(total)}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div>
+              <label className="text-sm font-semibold block mb-1.5">
+                Uang Diterima
+              </label>
+              <div className="flex items-center bg-white border border-black/10 rounded-lg px-4 py-2.5">
+                <span className="text-black/50 font-semibold mr-2">Rp</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={uangDiterima ? Number(uangDiterima).toLocaleString("id-ID") : ""}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, "");
+                    setUangDiterima(digits);
+                    if (localError) setLocalError("");
+                  }}
+                  placeholder="0"
+                  className="flex-1 outline-none font-semibold text-right"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center border-t border-black/10 pt-3">
+              <span className={`font-semibold ${kembalian < 0 ? "text-red-600" : "text-[#2d5a4a]"}`}>
+                {kembalian < 0 ? "Kurang Bayar" : "Kembalian"}
+              </span>
+              <span className={`font-bold text-lg ${kembalian < 0 ? "text-red-600" : "text-[#2d5a4a]"}`}>
+                {formatRupiah(Math.abs(kembalian))}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {isEdit && metodeBayar !== "tunai" && totalDibayar !== undefined && (
           <SelisihBayar totalBaru={total} totalDibayar={totalDibayar} />
         )}
 
-        {error && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-            {error}
+        {(localError || error) && (
+          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+            {localError || error}
           </div>
         )}
 
         <button
-          onClick={onConfirmPembayaran}
+          onClick={handleKlikKonfirmasi}
           className="w-full bg-[#2d5a4a] text-[#fdf8f0] font-semibold rounded-lg py-4 mt-4"
         >
           {isEdit ? "Simpan Perubahan" : "Konfirmasi Pembayaran"}
@@ -214,6 +294,11 @@ export default function CartPanel({
             </div>
             <div className="flex-1">
               <p className="font-semibold leading-tight">{item.namaMenu}</p>
+                {item.catatanItem && (
+                  <p className="text-xs text-[#2d5a4a] mt-0.5">
+                    Catatan: {item.catatanItem}
+                  </p>
+                )}
               <div className="flex items-center justify-between mt-1">
                 <span className="text-sm text-black/60">
                   {formatRupiah(item.harga)} &nbsp; {item.jumlah}x

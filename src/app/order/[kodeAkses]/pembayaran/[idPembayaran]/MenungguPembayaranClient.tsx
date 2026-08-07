@@ -20,6 +20,15 @@ interface PembayaranData {
 
 const isVA = (m: string) => m.endsWith("_va");
 
+const PAYMENT_ICONS: Record<string, string> = {
+  gopay: "/icons/payment/gopay.png",
+  dana: "/icons/payment/dana.png",
+  bri_va: "/icons/payment/bri_va.png",
+  bca_va: "/icons/payment/bca_va.png",
+  bni_va: "/icons/payment/bni_va.png",
+  qris: "/icons/payment/qris.png",
+};
+
 export default function MenungguPembayaranClient({
   initialData,
 }: {
@@ -34,6 +43,7 @@ export default function MenungguPembayaranClient({
   );
 
   const currentData = data ?? initialData;
+  const iconMetode = PAYMENT_ICONS[currentData.metode_pembayaran];
 
   useEffect(() => {
     if (data?.status_pembayaran === "berhasil") {
@@ -72,7 +82,7 @@ export default function MenungguPembayaranClient({
     <div className="max-w-md mx-auto pb-28">
 
       <div className="bg-[#fdf8f0] px-5 pt-10 pb-8 rounded-b-3xl text-center">
-        <div className="w-16 h-16 border-2 border-[#2d5a4a] rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 border-2 border-[#2d5a4a] rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
           ⏱
         </div>
 
@@ -155,10 +165,19 @@ export default function MenungguPembayaranClient({
 
               </div>
 
-              <button
-                className="w-10 h-10 bg-gray-200 rounded-lg"
-                aria-label="Salin nomor"
-              />
+              <div className="w-10 h-10 bg-[#fdf8f0] rounded-lg flex items-center justify-center overflow-hidden shrink-0">
+                {iconMetode ? (
+                  <Image
+                    src={iconMetode}
+                    alt={currentData.metode_pembayaran}
+                    width={32}
+                    height={32}
+                    className="object-contain"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-gray-200 rounded-lg" />
+                )}
+              </div>
 
             </div>
           ) : (
@@ -167,17 +186,24 @@ export default function MenungguPembayaranClient({
               <p className="text-xs text-black/50 mb-2">
                 QR QRIS
               </p>
-
-              <div className="w-full aspect-square bg-gray-200 rounded-lg mb-3" />
-
+            
+              <div className="w-full aspect-square rounded-lg mb-3 overflow-hidden relative">
+                <Image
+                  src="/icons/payment/qris_placeholder.png"
+                  alt="QR QRIS"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            
               <p className="text-xs text-black/50">
                 Total Tagihan
               </p>
-
+            
               <p className="font-bold">
                 {formatRupiah(currentData.jumlah_bayar)}
               </p>
-
+            
             </div>
           )}
 
